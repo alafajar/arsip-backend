@@ -18,9 +18,10 @@ async function main() {
 
   await prisma.user.upsert({
     where: { email: 'admin@kampus.ac.id' },
-    update: {},
+    update: { username: 'admin' },
     create: {
       email: 'admin@kampus.ac.id',
+      username: 'admin',
       fullName: 'Administrator',
       role: 'ADMIN',
       passwordHash: await hashPassword(adminPassword),
@@ -29,9 +30,10 @@ async function main() {
 
   await prisma.user.upsert({
     where: { email: 'kaprodi@kampus.ac.id' },
-    update: {},
+    update: { username: 'kaprodi' },
     create: {
       email: 'kaprodi@kampus.ac.id',
+      username: 'kaprodi',
       fullName: 'Kepala Program Studi',
       role: 'KAPRODI',
       passwordHash: await hashPassword(kaprodiPassword),

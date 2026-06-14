@@ -43,6 +43,7 @@ enum ChangeAction {
 model User {
   id           String   @id @default(uuid()) @db.Uuid
   email        String   @unique
+  username     String   @unique
   passwordHash String
   fullName     String
   role         Role
@@ -50,10 +51,25 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  imports    ExcelImport[]
-  changeLogs ChangeLog[]
+  imports       ExcelImport[]
+  changeLogs    ChangeLog[]
+  refreshTokens RefreshToken[]
 
   @@map("users")
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @db.Uuid
+  tokenHash String
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
 }
 
 model MenuItem {
