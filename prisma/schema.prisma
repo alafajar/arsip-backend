@@ -1,0 +1,196 @@
+// schema.prisma — Sistem Akreditasi
+//
+// CATATAN PRISMA 7:
+// Jalankan `npx prisma init` lebih dulu agar blok `generator` yang BENAR untuk Prisma 7
+// dibuat otomatis (v7 mengubah generator). Pakai blok generator hasil init itu — JANGAN
+// tulis ulang manual. Datasource + enums + models di bawah aman/stabil lintas versi.
+// Verifikasi sintaks v7 di dokumentasi resmi bila ragu.
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// generator client { ... }  <-- gunakan hasil `npx prisma init` (Prisma 7)
+
+// ============================ ENUMS ============================
+
+enum Role {
+  ADMIN
+  KAPRODI
+}
+
+enum ColumnType {
+  DATE
+  TEXT
+  INTEGER
+  FLOAT
+  BOOLEAN
+  MARKING
+  URL
+}
+
+enum ImportStatus {
+  PENDING
+  PARSED
+  FAILED
+}
+
+enum ChangeAction {
+  CREATE
+  UPDATE
+  DELETE
+}
+
+// ============================ MODELS ============================
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  email        String   @unique
+  passwordHash String
+  fullName     String
+  role         Role
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  imports    ExcelImport[]
+  changeLogs ChangeLog[]
+
+  @@map("users")
+}
+
+model MenuItem {
+  id         String   @id @default(uuid()) @db.Uuid
+  parentId   String?  @db.Uuid
+  name       String
+  orderIndex Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // self-reference: hierarki menu (Jurusan > LAMTEK > ...)
+  parent   MenuItem?  @relation("MenuTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children MenuItem[] @relation("MenuTree")
+  sheets   Sheet[]
+
+  @@index([parentId])
+  @@map("menu_items")
+}
+
+model ExcelImport {
+  id               String       @id @default(uuid()) @db.Uuid
+  uploadedById     String       @db.Uuid
+  originalFilename String
+  storagePath      String
+  status           ImportStatus @default(PENDING)
+  importedAt       DateTime     @default(now())
+
+  uploadedBy User    @relation(fields: [uploadedById], references: [id])
+  sheets     Sheet[]
+
+  @@index([uploadedById])
+  @@map("excel_imports")
+}
+
+model Sheet {
+  id             String   @id @default(uuid()) @db.Uuid
+  menuItemId     String   @db.Uuid
+  sourceImportId String?  @db.Uuid
+  name           String
+  orderIndex     Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  menuItem     MenuItem     @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  sourceImport ExcelImport? @relation(fields: [sourceImportId], references: [id])
+  columns      Column[]
+  rows         Row[]
+  cellMerges   CellMerge[]
+
+  @@index([menuItemId])
+  @@map("sheets")
+}
+
+model Column {
+  id                String     @id @default(uuid()) @db.Uuid
+  sheetId           String     @db.Uuid
+  parentColumnId    String?    @db.Uuid
+  name              String
+  type              ColumnType @default(TEXT)
+  isFormula         Boolean    @default(false)
+  formulaDefinition Json?
+  orderIndex        Int        @default(0)
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  sheet        Sheet    @relation(fields: [sheetId], references: [id], onDelete: Cascade)
+  // self-reference: header bertingkat (mis. "Tingkat" -> Internasional/Nasional/Lokal)
+  parentColumn Column?  @relation("ColumnTree", fields: [parentColumnId], references: [id], onDelete: Cascade)
+  childColumns Column[] @relation("ColumnTree")
+  cells        Cell[]
+
+  @@index([sheetId])
+  @@index([parentColumnId])
+  @@map("columns")
+}
+
+model Row {
+  id         String   @id @default(uuid()) @db.Uuid
+  sheetId    String   @db.Uuid
+  orderIndex Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  sheet Sheet  @relation(fields: [sheetId], references: [id], onDelete: Cascade)
+  cells Cell[]
+
+  @@index([sheetId])
+  @@map("rows")
+}
+
+model Cell {
+  id        String   @id @default(uuid()) @db.Uuid
+  rowId     String   @db.Uuid
+  columnId  String   @db.Uuid
+  value     String? // diinterpretasi sesuai Column.type; null = kosong
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  row    Row    @relation(fields: [rowId], references: [id], onDelete: Cascade)
+  column Column @relation(fields: [columnId], references: [id], onDelete: Cascade)
+
+  @@unique([rowId, columnId])
+  @@index([columnId])
+  @@map("cells")
+}
+
+model CellMerge {
+  id       String @id @default(uuid()) @db.Uuid
+  sheetId  String @db.Uuid
+  startRow Int
+  endRow   Int
+  startCol Int
+  endCol   Int
+
+  sheet Sheet @relation(fields: [sheetId], references: [id], onDelete: Cascade)
+
+  @@index([sheetId])
+  @@map("cell_merges")
+}
+
+model ChangeLog {
+  id         String       @id @default(uuid()) @db.Uuid
+  userId     String       @db.Uuid
+  entityType String
+  entityId   String       @db.Uuid
+  action     ChangeAction
+  beforeData Json?
+  afterData  Json?
+  createdAt  DateTime     @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@map("change_logs")
+}
