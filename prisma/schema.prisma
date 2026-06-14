@@ -1,17 +1,13 @@
 // schema.prisma — Sistem Akreditasi
-//
-// CATATAN PRISMA 7:
-// Jalankan `npx prisma init` lebih dulu agar blok `generator` yang BENAR untuk Prisma 7
-// dibuat otomatis (v7 mengubah generator). Pakai blok generator hasil init itu — JANGAN
-// tulis ulang manual. Datasource + enums + models di bawah aman/stabil lintas versi.
-// Verifikasi sintaks v7 di dokumentasi resmi bila ragu.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
-
-// generator client { ... }  <-- gunakan hasil `npx prisma init` (Prisma 7)
 
 // ============================ ENUMS ============================
 
