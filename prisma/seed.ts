@@ -76,6 +76,24 @@ async function main() {
   });
 
   console.log('Seed selesai: menu contoh berhasil di-upsert.');
+
+  // Data contoh sementara — akan digantikan oleh hasil import Excel sungguhan.
+  const SHEET_IDS = {
+    dtps: '00000000-0000-0000-0002-000000000001',
+  };
+
+  await prisma.sheet.upsert({
+    where: { id: SHEET_IDS.dtps },
+    update: { name: 'DTPS', orderIndex: 0, menuItemId: MENU_IDS.dtps },
+    create: {
+      id: SHEET_IDS.dtps,
+      name: 'DTPS',
+      orderIndex: 0,
+      menuItemId: MENU_IDS.dtps,
+    },
+  });
+
+  console.log('Seed selesai: sheet contoh berhasil di-upsert.');
   await prisma.$disconnect();
 }
 

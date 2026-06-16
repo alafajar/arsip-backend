@@ -14,6 +14,7 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # Prompt file
 prompt-*.md
+!prompt-guardrails.md
 
 # Graphify
 graphify-out/

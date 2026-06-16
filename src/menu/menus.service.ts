@@ -5,6 +5,7 @@ export type MenuNode = {
   id: string;
   name: string;
   orderIndex: number;
+  sheets: { id: string; name: string }[];
   children: MenuNode[];
 };
 
@@ -15,6 +16,9 @@ export class MenusService {
   async getTree(): Promise<MenuNode[]> {
     const items = await this.prisma.menuItem.findMany({
       orderBy: [{ orderIndex: 'asc' }, { id: 'asc' }],
+      include: {
+        sheets: { select: { id: true, name: true }, orderBy: { orderIndex: 'asc' } },
+      },
     });
 
     // O(n) tree-building di memori: cukup untuk skala menu (puluhan node).
@@ -25,6 +29,7 @@ export class MenusService {
         id: item.id,
         name: item.name,
         orderIndex: item.orderIndex,
+        sheets: item.sheets,
         children: [],
       });
     }

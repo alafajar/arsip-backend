@@ -61,6 +61,10 @@ PK = uuid. Add manual & import Excel sama-sama mengisi `columns`/`rows`/`cells`
 - Setiap perubahan skema lewat migrasi Prisma; jangan edit DB manual.
 - Nama file & pesan commit deskriptif.
 
+## Guardrails wajib
+   Sebelum menulis atau mengubah kode apa pun, baca dan patuhi `docs/guardrails.md`.
+   Setiap slice harus lolos "Tes negatif wajib" di file itu, bukan hanya jalur 200.
+
 ## Backlog Sprint 2 (sadari saat membangun; JANGAN implementasi sekarang)
 - Admin membuat sheet manual dari web (UI: atur kolom -> tambah baris -> isi sel).
 - Kolom formula tingkat-kolom dengan builder dibatasi tipe data (cegah error tipe).
