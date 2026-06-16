@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Post, Request, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Request,
+  Res,
+  UnauthorizedException,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
+import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { Public } from './decorators/public.decorator';
@@ -11,8 +22,32 @@ export class AuthController {
   @Public()
   @Post('login')
   @UsePipes(new ValidationPipe({ whitelist: true }))
-  login(@Body() dto: LoginDto) {
-    return this.authService.login(dto.username, dto.password);
+  login(
+    @Body() dto: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authService.login(dto.username, dto.password, res);
+  }
+
+  @Public()
+  @Post('refresh')
+  refresh(
+    @Request() req: { cookies: Record<string, string> },
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const token: string | undefined = req.cookies['refresh_token'];
+    if (!token) throw new UnauthorizedException();
+    return this.authService.refreshTokens(token, res);
+  }
+
+  @Post('logout')
+  async logout(
+    @Request() req: { user: { id: string }; cookies: Record<string, string> },
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const token: string | undefined = req.cookies['refresh_token'];
+    await this.authService.logout(req.user.id, token, res);
+    return { message: 'Logged out' };
   }
 
   @Get('me')
