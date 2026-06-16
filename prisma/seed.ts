@@ -41,6 +41,41 @@ async function main() {
   });
 
   console.log('Seed selesai: admin & kaprodi berhasil di-upsert.');
+
+  // Data contoh sementara — akan digantikan oleh hasil import Excel sungguhan.
+  // UUID hardcoded agar upsert idempoten (name tidak @unique di schema).
+  const MENU_IDS = {
+    kriteria:    '00000000-0000-0000-0001-000000000001',
+    dtps:        '00000000-0000-0000-0001-000000000002',
+    profilDosen: '00000000-0000-0000-0001-000000000003',
+    kurikulum:   '00000000-0000-0000-0001-000000000004',
+  };
+
+  await prisma.menuItem.upsert({
+    where: { id: MENU_IDS.kriteria },
+    update: { name: 'Kriteria', orderIndex: 0 },
+    create: { id: MENU_IDS.kriteria, name: 'Kriteria', orderIndex: 0 },
+  });
+
+  await prisma.menuItem.upsert({
+    where: { id: MENU_IDS.dtps },
+    update: { name: 'DTPS', orderIndex: 0, parentId: MENU_IDS.kriteria },
+    create: { id: MENU_IDS.dtps, name: 'DTPS', orderIndex: 0, parentId: MENU_IDS.kriteria },
+  });
+
+  await prisma.menuItem.upsert({
+    where: { id: MENU_IDS.profilDosen },
+    update: { name: 'Profil Dosen', orderIndex: 1, parentId: MENU_IDS.kriteria },
+    create: { id: MENU_IDS.profilDosen, name: 'Profil Dosen', orderIndex: 1, parentId: MENU_IDS.kriteria },
+  });
+
+  await prisma.menuItem.upsert({
+    where: { id: MENU_IDS.kurikulum },
+    update: { name: 'Kurikulum', orderIndex: 1 },
+    create: { id: MENU_IDS.kurikulum, name: 'Kurikulum', orderIndex: 1 },
+  });
+
+  console.log('Seed selesai: menu contoh berhasil di-upsert.');
   await prisma.$disconnect();
 }
 
