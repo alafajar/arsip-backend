@@ -12,6 +12,7 @@ import {
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
+import { Throttle } from '@nestjs/throttler';
 import { Public } from './decorators/public.decorator';
 import { Roles, Role } from './decorators/roles.decorator';
 
@@ -21,6 +22,7 @@ export class AuthController {
 
   @Public()
   @Post('login')
+  @Throttle({ default: { limit: Number(process.env['THROTTLE_LOGIN_LIMIT'] ?? 5), ttl: 60_000 } })
   @UsePipes(new ValidationPipe({ whitelist: true }))
   login(
     @Body() dto: LoginDto,
@@ -31,6 +33,7 @@ export class AuthController {
 
   @Public()
   @Post('refresh')
+  @Throttle({ default: { limit: Number(process.env['THROTTLE_REFRESH_LIMIT'] ?? 10), ttl: 60_000 } })
   refresh(
     @Request() req: { cookies: Record<string, string> },
     @Res({ passthrough: true }) res: Response,
