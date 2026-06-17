@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { PrismaService } from '../prisma/prisma.service';
 import { hashPassword, verifyPassword } from './password.util';
+import { hashToken } from './token.util';
 
 @Injectable()
 export class AuthService {
@@ -53,7 +54,7 @@ export class AuthService {
     await this.prisma.refreshToken.create({
       data: {
         userId: user.id,
-        tokenHash: await hashPassword(refreshToken),
+        tokenHash: hashToken(refreshToken),
         expiresAt,
         revokedAt: null,
       },
@@ -98,26 +99,27 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    // 3. Cari semua baris refresh token milik user yang belum expired
-    const now = new Date();
-    const candidates = await this.prisma.refreshToken.findMany({
-      where: { userId: user.id, expiresAt: { gt: now } },
+    // 3. Lookup eksak berdasarkan hash SHA-256
+    const presentedHash = hashToken(rawToken);
+    const matched = await this.prisma.refreshToken.findFirst({
+      where: { userId: user.id, tokenHash: presentedHash },
     });
 
-    // Cocokkan token mentah ke salah satu hash
-    let matched: (typeof candidates)[number] | undefined;
-    for (const row of candidates) {
-      if (await verifyPassword(rawToken, row.tokenHash)) {
-        matched = row;
-        break;
-      }
-    }
+    const now = new Date();
 
+    // Token tidak dikenal → tolak
     if (!matched) {
+      this.clearRefreshCookie(res);
       throw new UnauthorizedException();
     }
 
-    // 4. Reuse detection: token sudah di-revoke → sinyal pencurian
+    // Sudah kedaluwarsa → tolak
+    if (matched.expiresAt <= now) {
+      this.clearRefreshCookie(res);
+      throw new UnauthorizedException();
+    }
+
+    // 4. Reuse detection: token sudah di-revoke tapi dipakai lagi → sinyal pencurian
     if (matched.revokedAt !== null) {
       await this.prisma.refreshToken.updateMany({
         where: { userId: user.id },
@@ -127,7 +129,7 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    // 5. Rotasi: revoke lama, terbitkan pasangan baru
+    // 5. Rotasi: revoke yang lama, terbitkan pasangan baru
     await this.prisma.refreshToken.update({
       where: { id: matched.id },
       data: { revokedAt: now },
@@ -140,19 +142,11 @@ export class AuthService {
   async logout(userId: string, rawToken: string | undefined, res: Response) {
     if (rawToken) {
       const now = new Date();
-      // Cari dan revoke hanya baris yang cocok dengan cookie ini
-      const candidates = await this.prisma.refreshToken.findMany({
-        where: { userId, expiresAt: { gt: now }, revokedAt: null },
+      const presentedHash = hashToken(rawToken);
+      await this.prisma.refreshToken.updateMany({
+        where: { userId, tokenHash: presentedHash, revokedAt: null },
+        data: { revokedAt: now },
       });
-      for (const row of candidates) {
-        if (await verifyPassword(rawToken, row.tokenHash)) {
-          await this.prisma.refreshToken.update({
-            where: { id: row.id },
-            data: { revokedAt: now },
-          });
-          break;
-        }
-      }
     }
     this.clearRefreshCookie(res);
   }

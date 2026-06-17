@@ -6,8 +6,6 @@ import {
   Request,
   Res,
   UnauthorizedException,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
@@ -23,7 +21,6 @@ export class AuthController {
   @Public()
   @Post('login')
   @Throttle({ default: { limit: Number(process.env['THROTTLE_LOGIN_LIMIT'] ?? 5), ttl: 60_000 } })
-  @UsePipes(new ValidationPipe({ whitelist: true }))
   login(
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) res: Response,
