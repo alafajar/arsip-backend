@@ -1,13 +1,20 @@
 import {
+  Body,
   Controller,
   DefaultValuePipe,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   ParseUUIDPipe,
+  Post,
   Query,
+  Request,
 } from '@nestjs/common';
+import { Roles, Role } from '../auth/decorators/roles.decorator';
 import { SheetsService } from './sheets.service';
+import { CreateRowDto } from './dto/create-row.dto';
 
 @Controller('sheets')
 export class SheetsController {
@@ -21,6 +28,17 @@ export class SheetsController {
   @Get(':id/columns')
   getColumns(@Param('id', ParseUUIDPipe) id: string) {
     return this.sheetsService.getColumns(id);
+  }
+
+  @Post(':id/rows')
+  @Roles(Role.ADMIN)
+  @HttpCode(HttpStatus.CREATED)
+  createRow(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: CreateRowDto,
+    @Request() req: { user: { id: string } },
+  ) {
+    return this.sheetsService.createRow(id, dto, req.user.id);
   }
 
   @Get(':id/rows')

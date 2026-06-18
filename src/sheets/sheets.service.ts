@@ -1,6 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { ColumnType } from '../../generated/prisma/client';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { ChangeAction, ColumnType } from '../../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { validateValueForType } from '../columns/column-value.validator';
+import { CreateRowDto } from './dto/create-row.dto';
 
 export interface ColumnNode {
   id: string;
@@ -91,6 +93,89 @@ export class SheetsService {
     });
 
     return { rows, total, limit: safeLimit, offset: safeOffset };
+  }
+
+  async createRow(sheetId: string, dto: CreateRowDto, userId: string) {
+    // 1. Sheet ada?
+    const sheet = await this.prisma.sheet.findUnique({
+      where: { id: sheetId },
+      select: { id: true },
+    });
+    if (!sheet) throw new NotFoundException('Sheet tidak ditemukan');
+
+    // 2. Ambil semua kolom sheet: leaf map (untuk validasi) + all IDs (untuk null-fill respons)
+    const allColumns = await this.prisma.column.findMany({
+      where: { sheetId },
+      select: { id: true, name: true, type: true, _count: { select: { childColumns: true } } },
+    });
+    const allColumnIds = allColumns.map((c) => c.id);
+    const leafMap = new Map(
+      allColumns
+        .filter((c) => c._count.childColumns === 0)
+        .map((c) => [c.id, { name: c.name, type: c.type }]),
+    );
+
+    // 3. Validasi berlapis — fail-fast sebelum menyentuh DB tulis
+    const seenIds = new Set<string>();
+    for (const cell of dto.cells) {
+      const col = leafMap.get(cell.columnId);
+      if (!col) {
+        throw new BadRequestException(
+          `columnId "${cell.columnId}" tidak ditemukan di sheet ini atau merupakan node grup.`,
+        );
+      }
+      if (seenIds.has(cell.columnId)) {
+        throw new BadRequestException(`columnId "${cell.columnId}" duplikat dalam payload.`);
+      }
+      seenIds.add(cell.columnId);
+      validateValueForType(col.type, cell.value ?? null, col.name);
+    }
+
+    // 4. Transaksi atomik: baris + cell + audit (semua-atau-tidak)
+    const newRow = await this.prisma.$transaction(async (tx) => {
+      const last = await tx.row.findFirst({
+        where: { sheetId },
+        orderBy: { orderIndex: 'desc' },
+        select: { orderIndex: true },
+      });
+      const orderIndex = (last?.orderIndex ?? 0) + 1;
+
+      const row = await tx.row.create({
+        data: { sheetId, orderIndex },
+        select: { id: true, orderIndex: true },
+      });
+
+      if (dto.cells.length > 0) {
+        await tx.cell.createMany({
+          data: dto.cells.map((c) => ({
+            rowId: row.id,
+            columnId: c.columnId,
+            value: c.value ?? null,
+          })),
+        });
+      }
+
+      await tx.changeLog.create({
+        data: {
+          userId,
+          entityType: 'Row',
+          entityId: row.id,
+          action: ChangeAction.CREATE,
+          afterData: { sheetId, orderIndex: row.orderIndex },
+        },
+      });
+
+      return row;
+    });
+
+    // 5. Bangun respons: bentuk sama dengan 3d (key semua columnId, nilai null bila tidak ada)
+    const cellValueMap = new Map(dto.cells.map((c) => [c.columnId, c.value ?? null]));
+    const cells: Record<string, string | null> = {};
+    for (const colId of allColumnIds) {
+      cells[colId] = cellValueMap.get(colId) ?? null;
+    }
+
+    return { rowId: newRow.id, orderIndex: newRow.orderIndex, cells };
   }
 
   async findById(id: string) {
