@@ -3,6 +3,7 @@ import { ChangeAction, ColumnType } from '../../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { validateValueForType } from '../columns/column-value.validator';
 import { CreateRowDto } from './dto/create-row.dto';
+import { UpdateRowDto } from './dto/update-row.dto';
 
 export interface ColumnNode {
   id: string;
@@ -176,6 +177,107 @@ export class SheetsService {
     }
 
     return { rowId: newRow.id, orderIndex: newRow.orderIndex, cells };
+  }
+
+  async updateRow(sheetId: string, rowId: string, dto: UpdateRowDto, userId: string) {
+    // 1. Sheet ada?
+    const sheet = await this.prisma.sheet.findUnique({
+      where: { id: sheetId },
+      select: { id: true },
+    });
+    if (!sheet) throw new NotFoundException('Sheet tidak ditemukan');
+
+    // 2. Row ada DAN milik sheet ini? (cegah edit baris sheet lain via path palsu)
+    const row = await this.prisma.row.findUnique({
+      where: { id: rowId },
+      select: { id: true, orderIndex: true, sheetId: true },
+    });
+    if (!row || row.sheetId !== sheetId) {
+      throw new NotFoundException('Baris tidak ditemukan');
+    }
+
+    // 3. Ambil semua kolom sheet: leaf map (validasi) + all IDs (null-fill respons)
+    const allColumns = await this.prisma.column.findMany({
+      where: { sheetId },
+      select: { id: true, name: true, type: true, _count: { select: { childColumns: true } } },
+    });
+    const allColumnIds = allColumns.map((c) => c.id);
+    const leafMap = new Map(
+      allColumns
+        .filter((c) => c._count.childColumns === 0)
+        .map((c) => [c.id, { name: c.name, type: c.type }]),
+    );
+
+    // 4. Validasi berlapis — fail-fast
+    const seenIds = new Set<string>();
+    for (const cell of dto.cells) {
+      const col = leafMap.get(cell.columnId);
+      if (!col) {
+        throw new BadRequestException(
+          `columnId "${cell.columnId}" tidak ditemukan di sheet ini atau merupakan node grup.`,
+        );
+      }
+      if (seenIds.has(cell.columnId)) {
+        throw new BadRequestException(`columnId "${cell.columnId}" duplikat dalam payload.`);
+      }
+      seenIds.add(cell.columnId);
+
+      // Hanya nilai non-kosong yang perlu divalidasi tipe; kosong = perintah hapus
+      const isEmpty = cell.value === null || cell.value === undefined || cell.value.trim() === '';
+      if (!isEmpty) {
+        validateValueForType(col.type, cell.value!, col.name);
+      }
+    }
+
+    // 5. Transaksi atomik: upsert/hapus cell + sentuh updatedAt row + audit
+    await this.prisma.$transaction(async (tx) => {
+      for (const cell of dto.cells) {
+        const isEmpty = cell.value === null || cell.value === undefined || cell.value.trim() === '';
+
+        if (isEmpty) {
+          // Kosongkan sel = hapus baris Cell (bukan simpan ""); aman jika belum ada
+          await tx.cell.deleteMany({ where: { rowId, columnId: cell.columnId } });
+        } else {
+          await tx.cell.upsert({
+            where: { rowId_columnId: { rowId, columnId: cell.columnId } },
+            update: { value: cell.value },
+            create: { rowId, columnId: cell.columnId, value: cell.value },
+          });
+        }
+      }
+
+      // Sentuh updatedAt row agar "last modified" mencerminkan edit ini
+      await tx.row.update({
+        where: { id: rowId },
+        data: { updatedAt: new Date() },
+      });
+
+      await tx.changeLog.create({
+        data: {
+          userId,
+          entityType: 'Row',
+          entityId: rowId,
+          action: ChangeAction.UPDATE,
+          afterData: { sheetId, changedColumns: dto.cells.map((c) => c.columnId) },
+        },
+      });
+    });
+
+    // 6. Re-fetch cell setelah transaksi → bangun respons konsisten (bentuk sama dengan 3d/3e)
+    const updatedCells = await this.prisma.cell.findMany({
+      where: { rowId },
+      select: { columnId: true, value: true },
+    });
+
+    const cells: Record<string, string | null> = {};
+    for (const colId of allColumnIds) {
+      cells[colId] = null;
+    }
+    for (const cell of updatedCells) {
+      cells[cell.columnId] = cell.value ?? null;
+    }
+
+    return { rowId, orderIndex: row.orderIndex, cells };
   }
 
   async findById(id: string) {

@@ -8,6 +8,7 @@ import {
   Param,
   ParseIntPipe,
   ParseUUIDPipe,
+  Patch,
   Post,
   Query,
   Request,
@@ -15,6 +16,7 @@ import {
 import { Roles, Role } from '../auth/decorators/roles.decorator';
 import { SheetsService } from './sheets.service';
 import { CreateRowDto } from './dto/create-row.dto';
+import { UpdateRowDto } from './dto/update-row.dto';
 
 @Controller('sheets')
 export class SheetsController {
@@ -39,6 +41,17 @@ export class SheetsController {
     @Request() req: { user: { id: string } },
   ) {
     return this.sheetsService.createRow(id, dto, req.user.id);
+  }
+
+  @Patch(':id/rows/:rowId')
+  @Roles(Role.ADMIN)
+  updateRow(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('rowId', ParseUUIDPipe) rowId: string,
+    @Body() dto: UpdateRowDto,
+    @Request() req: { user: { id: string } },
+  ) {
+    return this.sheetsService.updateRow(id, rowId, dto, req.user.id);
   }
 
   @Get(':id/rows')
