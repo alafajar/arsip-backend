@@ -163,6 +163,79 @@ async function main() {
   });
 
   console.log('Seed selesai: kolom DTPS berhasil di-upsert (7 daun + 1 grup).');
+
+  // Data contoh sementara — akan digantikan oleh hasil import Excel sungguhan.
+  // 3 baris cukup untuk membuktikan pivot; 24 baris penuh adalah tugas import (T5).
+  const ROW_IDS = {
+    row1: '00000000-0000-0000-0004-000000000001',
+    row2: '00000000-0000-0000-0004-000000000002',
+    row3: '00000000-0000-0000-0004-000000000003',
+  };
+
+  // Alias ke COLUMN_IDS sentinel 3c agar mudah dibaca
+  const C = {
+    no:              '00000000-0000-0000-0003-000000000001',
+    namaDosen:       '00000000-0000-0000-0003-000000000002',
+    // kualAkademik  '...0003' — node grup, tidak punya Cell
+    magister:        '00000000-0000-0000-0003-000000000004',
+    doktor:          '00000000-0000-0000-0003-000000000005',
+    jabatanAkademik: '00000000-0000-0000-0003-000000000006',
+    nidn:            '00000000-0000-0000-0003-000000000007',
+    linkDokumen:     '00000000-0000-0000-0003-000000000008',
+  };
+
+  await prisma.row.upsert({
+    where: { id: ROW_IDS.row1 },
+    update: { orderIndex: 1 },
+    create: { id: ROW_IDS.row1, sheetId: SHEET_IDS.dtps, orderIndex: 1 },
+  });
+  await prisma.row.upsert({
+    where: { id: ROW_IDS.row2 },
+    update: { orderIndex: 2 },
+    create: { id: ROW_IDS.row2, sheetId: SHEET_IDS.dtps, orderIndex: 2 },
+  });
+  await prisma.row.upsert({
+    where: { id: ROW_IDS.row3 },
+    update: { orderIndex: 3 },
+    create: { id: ROW_IDS.row3, sheetId: SHEET_IDS.dtps, orderIndex: 3 },
+  });
+
+  // Helper upsert cell — unique constraint (rowId, columnId) dipakai sebagai where
+  const upsertCell = (rowId: string, columnId: string, value: string | null) =>
+    prisma.cell.upsert({
+      where: { rowId_columnId: { rowId, columnId } },
+      update: { value },
+      create: { rowId, columnId, value },
+    });
+
+  // Baris 1 — semua kolom daun terisi; NIDN dengan nol di depan (DoD Sprint 1)
+  await upsertCell(ROW_IDS.row1, C.no, '1');
+  await upsertCell(ROW_IDS.row1, C.namaDosen, 'Dr. Andi Susanto, M.T., Ph.D.');
+  await upsertCell(ROW_IDS.row1, C.magister, 'Teknik Informatika');
+  await upsertCell(ROW_IDS.row1, C.doktor, 'Computer Science');
+  await upsertCell(ROW_IDS.row1, C.jabatanAkademik, 'Profesor');
+  await upsertCell(ROW_IDS.row1, C.nidn, '0017026012');
+  await upsertCell(ROW_IDS.row1, C.linkDokumen, 'https://drive.google.com/file/d/abc/view');
+
+  // Baris 2 — kolom Doktor sengaja tidak diisi → pivot harus menghasilkan null
+  await upsertCell(ROW_IDS.row2, C.no, '2');
+  await upsertCell(ROW_IDS.row2, C.namaDosen, 'Dr. Budi Santoso, M.Kom.');
+  await upsertCell(ROW_IDS.row2, C.magister, 'Ilmu Komputer');
+  // C.doktor dikosongkan — tidak ada baris Cell untuk kombinasi ini
+  await upsertCell(ROW_IDS.row2, C.jabatanAkademik, 'Lektor Kepala');
+  await upsertCell(ROW_IDS.row2, C.nidn, '0023051978');
+  await upsertCell(ROW_IDS.row2, C.linkDokumen, 'https://drive.google.com/file/d/def/view');
+
+  // Baris 3 — kolom Link Dokumen sengaja tidak diisi → pivot null
+  await upsertCell(ROW_IDS.row3, C.no, '3');
+  await upsertCell(ROW_IDS.row3, C.namaDosen, 'Ir. Citra Dewi, M.T.');
+  await upsertCell(ROW_IDS.row3, C.magister, 'Teknik Elektro');
+  await upsertCell(ROW_IDS.row3, C.doktor, null);
+  await upsertCell(ROW_IDS.row3, C.jabatanAkademik, 'Lektor');
+  await upsertCell(ROW_IDS.row3, C.nidn, '0011081985');
+  // C.linkDokumen dikosongkan
+
+  console.log('Seed selesai: 3 baris contoh DTPS + cell berhasil di-upsert.');
   await prisma.$disconnect();
 }
 

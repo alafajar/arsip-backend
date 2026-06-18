@@ -46,6 +46,53 @@ export class SheetsService {
     return roots;
   }
 
+  async getRows(sheetId: string, limit: number, offset: number) {
+    const safeLimit = Math.min(Math.max(1, limit), 200);
+    const safeOffset = Math.max(0, offset);
+
+    const sheet = await this.prisma.sheet.findUnique({
+      where: { id: sheetId },
+      select: { id: true },
+    });
+    if (!sheet) throw new NotFoundException('Sheet tidak ditemukan');
+
+    // Ambil semua columnId sheet sekali — dipakai untuk mengisi null pada kolom yang tidak punya Cell
+    const columns = await this.prisma.column.findMany({
+      where: { sheetId },
+      select: { id: true },
+    });
+    const allColumnIds = columns.map((c) => c.id);
+
+    const [total, dbRows] = await Promise.all([
+      this.prisma.row.count({ where: { sheetId } }),
+      this.prisma.row.findMany({
+        where: { sheetId },
+        select: {
+          id: true,
+          orderIndex: true,
+          cells: { select: { columnId: true, value: true } },
+        },
+        orderBy: [{ orderIndex: 'asc' }, { id: 'asc' }],
+        take: safeLimit,
+        skip: safeOffset,
+      }),
+    ]);
+
+    // Pivot di memori — anti-N+1: satu query baris+cell, lalu transformasi di kode
+    const rows = dbRows.map((row) => {
+      const cells: Record<string, string | null> = {};
+      for (const colId of allColumnIds) {
+        cells[colId] = null;
+      }
+      for (const cell of row.cells) {
+        cells[cell.columnId] = cell.value ?? null;
+      }
+      return { rowId: row.id, orderIndex: row.orderIndex, cells };
+    });
+
+    return { rows, total, limit: safeLimit, offset: safeOffset };
+  }
+
   async findById(id: string) {
     const sheet = await this.prisma.sheet.findUnique({
       where: { id },
