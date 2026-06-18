@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   DefaultValuePipe,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -41,6 +42,16 @@ export class SheetsController {
     @Request() req: { user: { id: string } },
   ) {
     return this.sheetsService.createRow(id, dto, req.user.id);
+  }
+
+  @Delete(':id/rows/:rowId')
+  @Roles(Role.ADMIN)
+  deleteRow(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('rowId', ParseUUIDPipe) rowId: string,
+    @Request() req: { user: { id: string } },
+  ) {
+    return this.sheetsService.deleteRow(id, rowId, req.user.id);
   }
 
   @Patch(':id/rows/:rowId')

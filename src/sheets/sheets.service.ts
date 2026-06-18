@@ -280,6 +280,52 @@ export class SheetsService {
     return { rowId, orderIndex: row.orderIndex, cells };
   }
 
+  async deleteRow(sheetId: string, rowId: string, userId: string) {
+    // 1. Sheet ada?
+    const sheet = await this.prisma.sheet.findUnique({
+      where: { id: sheetId },
+      select: { id: true },
+    });
+    if (!sheet) throw new NotFoundException('Sheet tidak ditemukan');
+
+    // 2. Row ada DAN milik sheet ini? (cegah hapus baris sheet lain via path palsu)
+    const row = await this.prisma.row.findUnique({
+      where: { id: rowId },
+      select: { id: true, orderIndex: true, sheetId: true },
+    });
+    if (!row || row.sheetId !== sheetId) {
+      throw new NotFoundException('Baris tidak ditemukan');
+    }
+
+    // 3. Snapshot sel sebelum dihapus — disimpan di ChangeLog.beforeData
+    const cellsSnapshot = await this.prisma.cell.findMany({
+      where: { rowId },
+      select: { columnId: true, value: true },
+    });
+
+    // 4. Transaksi: audit dulu, baru hapus Row
+    // Cell.rowId punya onDelete: Cascade → cukup delete Row; sel ikut terhapus otomatis.
+    await this.prisma.$transaction(async (tx) => {
+      await tx.changeLog.create({
+        data: {
+          userId,
+          entityType: 'Row',
+          entityId: rowId,
+          action: ChangeAction.DELETE,
+          beforeData: {
+            sheetId,
+            orderIndex: row.orderIndex,
+            cells: cellsSnapshot,
+          },
+        },
+      });
+
+      await tx.row.delete({ where: { id: rowId } });
+    });
+
+    return { deleted: true, rowId };
+  }
+
   async findById(id: string) {
     const sheet = await this.prisma.sheet.findUnique({
       where: { id },
