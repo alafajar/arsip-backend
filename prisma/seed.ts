@@ -94,6 +94,75 @@ async function main() {
   });
 
   console.log('Seed selesai: sheet contoh berhasil di-upsert.');
+
+  // Kolom DTPS — 7 daun + 1 grup (Kualifikasi Akademik).
+  // Sentinel UUID prefix 0003 untuk membedakan dari menu (0001) dan sheet (0002).
+  // type pada node grup = TEXT (default schema); bukan null karena kolom non-nullable.
+  // Frontend membedakan grup vs daun dari ada/tidaknya children di response.
+  const COLUMN_IDS = {
+    no:              '00000000-0000-0000-0003-000000000001',
+    namaDosen:       '00000000-0000-0000-0003-000000000002',
+    kualAkademik:    '00000000-0000-0000-0003-000000000003',
+    magister:        '00000000-0000-0000-0003-000000000004',
+    doktor:          '00000000-0000-0000-0003-000000000005',
+    jabatanAkademik: '00000000-0000-0000-0003-000000000006',
+    nidn:            '00000000-0000-0000-0003-000000000007',
+    linkDokumen:     '00000000-0000-0000-0003-000000000008',
+  };
+
+  // Kolom top-level (parentColumnId = null)
+  await prisma.column.upsert({
+    where: { id: COLUMN_IDS.no },
+    update: { name: 'No.', type: 'INTEGER', orderIndex: 1, parentColumnId: null },
+    create: { id: COLUMN_IDS.no, sheetId: SHEET_IDS.dtps, name: 'No.', type: 'INTEGER', orderIndex: 1 },
+  });
+
+  await prisma.column.upsert({
+    where: { id: COLUMN_IDS.namaDosen },
+    update: { name: 'Nama Dosen', type: 'TEXT', orderIndex: 2, parentColumnId: null },
+    create: { id: COLUMN_IDS.namaDosen, sheetId: SHEET_IDS.dtps, name: 'Nama Dosen', type: 'TEXT', orderIndex: 2 },
+  });
+
+  // Node grup — type wajib diisi karena non-nullable di schema; pakai default TEXT.
+  await prisma.column.upsert({
+    where: { id: COLUMN_IDS.kualAkademik },
+    update: { name: 'Kualifikasi Akademik', type: 'TEXT', orderIndex: 3, parentColumnId: null },
+    create: { id: COLUMN_IDS.kualAkademik, sheetId: SHEET_IDS.dtps, name: 'Kualifikasi Akademik', type: 'TEXT', orderIndex: 3 },
+  });
+
+  // Anak dari Kualifikasi Akademik
+  await prisma.column.upsert({
+    where: { id: COLUMN_IDS.magister },
+    update: { name: 'Magister', type: 'TEXT', orderIndex: 1, parentColumnId: COLUMN_IDS.kualAkademik },
+    create: { id: COLUMN_IDS.magister, sheetId: SHEET_IDS.dtps, name: 'Magister', type: 'TEXT', orderIndex: 1, parentColumnId: COLUMN_IDS.kualAkademik },
+  });
+
+  await prisma.column.upsert({
+    where: { id: COLUMN_IDS.doktor },
+    update: { name: 'Doktor', type: 'TEXT', orderIndex: 2, parentColumnId: COLUMN_IDS.kualAkademik },
+    create: { id: COLUMN_IDS.doktor, sheetId: SHEET_IDS.dtps, name: 'Doktor', type: 'TEXT', orderIndex: 2, parentColumnId: COLUMN_IDS.kualAkademik },
+  });
+
+  await prisma.column.upsert({
+    where: { id: COLUMN_IDS.jabatanAkademik },
+    update: { name: 'Jabatan Akademik', type: 'TEXT', orderIndex: 4, parentColumnId: null },
+    create: { id: COLUMN_IDS.jabatanAkademik, sheetId: SHEET_IDS.dtps, name: 'Jabatan Akademik', type: 'TEXT', orderIndex: 4 },
+  });
+
+  // NIDN wajib TEXT — nol di depan harus utuh (mis. "0017026012")
+  await prisma.column.upsert({
+    where: { id: COLUMN_IDS.nidn },
+    update: { name: 'NIDN', type: 'TEXT', orderIndex: 5, parentColumnId: null },
+    create: { id: COLUMN_IDS.nidn, sheetId: SHEET_IDS.dtps, name: 'NIDN', type: 'TEXT', orderIndex: 5 },
+  });
+
+  await prisma.column.upsert({
+    where: { id: COLUMN_IDS.linkDokumen },
+    update: { name: 'Link Dokumen', type: 'URL', orderIndex: 6, parentColumnId: null },
+    create: { id: COLUMN_IDS.linkDokumen, sheetId: SHEET_IDS.dtps, name: 'Link Dokumen', type: 'URL', orderIndex: 6 },
+  });
+
+  console.log('Seed selesai: kolom DTPS berhasil di-upsert (7 daun + 1 grup).');
   await prisma.$disconnect();
 }
 

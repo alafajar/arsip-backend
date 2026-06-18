@@ -9,4 +9,9 @@ export class SheetsController {
   findById(@Param('id', ParseUUIDPipe) id: string) {
     return this.sheetsService.findById(id);
   }
+
+  @Get(':id/columns')
+  getColumns(@Param('id', ParseUUIDPipe) id: string) {
+    return this.sheetsService.getColumns(id);
+  }
 }
