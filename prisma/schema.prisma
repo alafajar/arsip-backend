@@ -110,6 +110,7 @@ model Sheet {
   sourceImportId String?  @db.Uuid
   name           String
   orderIndex     Int      @default(0)
+  isReadOnly     Boolean  @default(false)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 

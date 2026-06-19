@@ -333,6 +333,7 @@ export class SheetsService {
         id: true,
         name: true,
         orderIndex: true,
+        isReadOnly: true,
         menuItem: { select: { id: true, name: true } },
       },
     });

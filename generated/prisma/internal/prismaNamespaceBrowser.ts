@@ -136,6 +136,7 @@ export const SheetScalarFieldEnum = {
   sourceImportId: 'sourceImportId',
   name: 'name',
   orderIndex: 'orderIndex',
+  isReadOnly: 'isReadOnly',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
