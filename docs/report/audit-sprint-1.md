@@ -53,9 +53,9 @@ Kualitas implementasi **konsisten dan disiplin**: setiap slice punya task log, p
 | Metadata sheet | `GET /sheets/:id` |
 | Pohon kolom (header bertingkat) | `GET /sheets/:id/columns` |
 | Baris ter-pivot + pagination | `GET /sheets/:id/rows?limit=50&offset=0` |
-| Tambah baris (atomik + audit) | `POST /sheets/:id/rows` (ADMIN) |
-| Edit baris (upsert + delete-on-empty) | `PATCH /sheets/:id/rows/:rowId` (ADMIN) |
-| Hapus baris (cascade Cell + snapshot audit) | `DELETE /sheets/:id/rows/:rowId` (ADMIN) |
+| Tambah baris (atomik + audit) | `POST /sheets/:id/rows` (ADMIN, 409 jika `isReadOnly`) |
+| Edit baris (upsert + delete-on-empty) | `PATCH /sheets/:id/rows/:rowId` (ADMIN, 409 jika `isReadOnly`) |
+| Hapus baris (cascade Cell + snapshot audit) | `DELETE /sheets/:id/rows/:rowId` (ADMIN, 409 jika `isReadOnly`) |
 
 ### 2.4 Import Excel (T5)
 | Fitur | Endpoint |
@@ -103,6 +103,9 @@ Diletakkan di `src/columns/` (bukan `src/sheets/`) sehingga import (T5) bisa mem
 
 ### 3.8 Snapshot Audit Sebelum Delete
 `ChangeLog.beforeData` menyimpan isi baris yang dihapus *sebelum* `tx.row.delete`. Audit dan delete berada di transaksi yang sama — rollback atomik.
+
+### 3.9 Read-Only Write Guard (T7, post-audit)
+Helper privat `assertWritableSheet(sheetId)` di `SheetsService` dipanggil di awal `createRow`/`updateRow`/`deleteRow` sebelum transaksi tulis. Sheet cermin grid (`isReadOnly: true`, mis. EWMP) menolak operasi tulis dengan **409 Conflict** + pesan "Sheet ini hanya-baca dan tidak bisa diubah". Kode 409 sengaja dibedakan dari 403 (role tidak cukup) agar frontend bisa menampilkan pesan yang tepat — *bukan masalah peran, melainkan keadaan resource*. Satu pintu masuk untuk tiga method tulis: kalau besok ada cek tambahan (mis. lock sementara), cukup ubah di satu tempat.
 
 ---
 
@@ -311,6 +314,7 @@ Saat dipasang di belakang Nginx/Cloudflare dan toggle tidak diaktifkan, IP yang 
 - Reuse-detection refresh token (revoke-all-on-reuse).
 - Cookie httpOnly + secure (toggle env) + path scoped.
 - `forbidNonWhitelisted` di ValidationPipe.
+- **Read-only sheet write guard (T7, post-audit):** sheet cermin grid (`isReadOnly:true`) menolak `POST/PATCH/DELETE /sheets/:id/rows` dengan 409. Sebelumnya celah ini terbuka karena endpoint tulis dibuat sebelum flag `isReadOnly` ada di schema.
 
 ---
 
@@ -558,6 +562,30 @@ Backend ini **di atas rata-rata untuk Sprint 1**. Disiplin task log, anti-N+1, d
 3. **Engine generik membayar harganya saat skala.** EAV bagus untuk fleksibilitas tapi setiap baca/tulis = pivot. Untuk DTPS (24 baris) tidak terasa. Untuk sheet hasil import file 60 sheet × 1000 baris = perlu strategi caching atau materialized view. Sprint 2 harus mulai memikirkan ini.
 
 **Rekomendasi paling impactful untuk Sprint 2 (kalau hanya boleh pilih satu): HP1 (Test Suite + CI).** Semua refactor dan fitur baru lebih murah dengan jaring pengaman test.
+
+---
+
+## Addendum Post-Audit (2026-06-20)
+
+Perubahan setelah audit ditandatangani — dicatat di sini agar skor & temuan tetap dapat dilacak.
+
+### T7 — Read-only write guard (closed gap)
+- **Celah yang ditutup:** Endpoint `POST/PATCH/DELETE /sheets/:id/rows` dibuat di slice 3e–3g sebelum kolom `Sheet.isReadOnly` ada (migrasi `add_sheet_isreadonly` baru muncul saat import multi-sheet). Akibatnya, ADMIN masih bisa menulis ke sheet cermin grid (mis. EWMP) yang seharusnya hanya-baca. Audit ini tidak menyorotnya sebagai weakness eksplisit — pelacakan kami yang luput. Sekarang ditutup.
+- **Implementasi:** Helper privat `assertWritableSheet(sheetId)` di `SheetsService` — satu titik untuk tiga method tulis. Tidak ada perubahan schema, tidak ada endpoint baru.
+- **Kontrak HTTP baru:**
+  - Sheet ID tidak ada → 404.
+  - Sheet `isReadOnly: true` → **409 Conflict** + pesan "Sheet ini hanya-baca dan tidak bisa diubah".
+  - Sheet editable (`isReadOnly: false`) → tetap 200/201 seperti sebelumnya.
+  - Urutan kegagalan: KAPRODI → 403 (Guard, sebelum service); ADMIN + read-only → 409 (service).
+- **Mengapa 409, bukan 403:** 403 dipakai untuk *"peranmu tidak boleh"* (role). 409 = *"permintaanmu bertabrakan dengan keadaan resource"* (read-only). Frontend dapat menampilkan pesan yang berbeda tanpa parsing body error.
+- **File berubah:** `src/sheets/sheets.service.ts` (helper + 3 call site), `docs/tasks/007-readonly-write-guard.md` (task log).
+- **Verifikasi:** Tes negatif manual sesuai matriks di task log (sheet EWMP & DTPS, token ADMIN & KAPRODI).
+
+### Catatan untuk Skor Komposit
+Closure T7 tidak menggeser skorcard di §12 secara material — ini perbaikan defense-in-depth, bukan kategori baru. Tapi **Security** layak naik 0.2 poin (7.0 → 7.2) karena satu pintu yang sebelumnya terbuka kini tertutup. Tidak diupdate inline agar jejak skor original tetap dapat dirujuk.
+
+### Backlog Terkait (belum dikerjakan)
+- Validasi "columnId di body harus milik sheet yang sama" untuk `POST/PATCH /sheets/:id/rows` — mencegah tulis cell dengan kolom dari sheet lain via path palsu. Hardening terpisah, bukan bagian T7.
 
 ---
 
