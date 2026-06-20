@@ -155,7 +155,7 @@ export class ImportsService {
     for (const ws of workbook.worksheets) {
       if (isDaftarSheet(ws.name)) continue;
 
-      if (ws.name.includes('Data Dosen Tetap')) {
+      if (ws.name.toLowerCase().includes('data dosen tetap')) {
         const colDefs = this.parseDtpsHeaders(ws);
         if (colDefs.length === 0) continue;
         const dataRows = this.parseDtpsDataRows(ws, colDefs);
@@ -417,30 +417,41 @@ export class ImportsService {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async writeDtpsToTx(tx: any, sheetId: string, data: DtpsSheetData) {
     const { colDefs, dataRows } = data;
-    const colIdMap = new Map<number, string>();
 
-    // Kolom — pass 1: top-level
+    // Dua map terpisah mencegah colIndex bentrok:
+    // "Kualifikasi Akademik" (grup, colIndex=3) dan "Magister" (anak, juga colIndex=3)
+    // berbagi colIndex yang sama. Jika satu Map dipakai, ID grup ditimpa ID Magister →
+    // Doktor mendapat parentId salah (Magister, bukan Kualifikasi Akademik).
+    const groupColIdMap = new Map<number, string>(); // colIndex → DB id (hanya node grup)
+    const leafColIdMap  = new Map<number, string>(); // colIndex → DB id (hanya kolom daun)
+
+    // Kolom — pass 1: top-level (grup + daun tanpa parent)
     for (const col of colDefs) {
       if (col.parentColIndex !== undefined) continue;
       const dbCol = await tx.column.create({
         data: { sheetId, name: col.name, type: col.type, orderIndex: col.orderIndex, parentColumnId: null },
         select: { id: true },
       });
-      colIdMap.set(col.colIndex, dbCol.id);
+      if (col.isGroup) {
+        groupColIdMap.set(col.colIndex, dbCol.id);
+      } else {
+        leafColIdMap.set(col.colIndex, dbCol.id);
+      }
     }
-    // Kolom — pass 2: anak
+
+    // Kolom — pass 2: anak (parentId selalu dari groupColIdMap)
     for (const col of colDefs) {
       if (col.parentColIndex === undefined) continue;
-      const parentId = colIdMap.get(col.parentColIndex);
+      const parentId = groupColIdMap.get(col.parentColIndex);
       if (!parentId) continue;
       const dbCol = await tx.column.create({
         data: { sheetId, name: col.name, type: col.type, orderIndex: col.orderIndex, parentColumnId: parentId },
         select: { id: true },
       });
-      colIdMap.set(col.colIndex, dbCol.id);
+      leafColIdMap.set(col.colIndex, dbCol.id);
     }
 
-    // Baris + cell (batch)
+    // Baris + cell (batch) — cell hanya pada kolom daun
     const rowInserts = dataRows.map((_, i) => ({ id: randomUUID(), sheetId, orderIndex: i + 1 }));
     if (rowInserts.length > 0) await tx.row.createMany({ data: rowInserts });
 
@@ -448,7 +459,7 @@ export class ImportsService {
     for (let i = 0; i < dataRows.length; i++) {
       const rowId = rowInserts[i].id;
       for (const cell of dataRows[i]) {
-        const columnId = colIdMap.get(cell.colIndex);
+        const columnId = leafColIdMap.get(cell.colIndex);
         if (columnId) cellInserts.push({ rowId, columnId, value: cell.value });
       }
     }
