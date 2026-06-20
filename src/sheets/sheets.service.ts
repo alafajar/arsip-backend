@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { ChangeAction, ColumnType } from '../../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { validateValueForType } from '../columns/column-value.validator';
@@ -96,13 +96,18 @@ export class SheetsService {
     return { rows, total, limit: safeLimit, offset: safeOffset };
   }
 
-  async createRow(sheetId: string, dto: CreateRowDto, userId: string) {
-    // 1. Sheet ada?
+  private async assertWritableSheet(sheetId: string): Promise<void> {
     const sheet = await this.prisma.sheet.findUnique({
       where: { id: sheetId },
-      select: { id: true },
+      select: { id: true, isReadOnly: true },
     });
     if (!sheet) throw new NotFoundException('Sheet tidak ditemukan');
+    if (sheet.isReadOnly) throw new ConflictException('Sheet ini hanya-baca dan tidak bisa diubah');
+  }
+
+  async createRow(sheetId: string, dto: CreateRowDto, userId: string) {
+    // 1. Sheet ada dan bisa ditulis?
+    await this.assertWritableSheet(sheetId);
 
     // 2. Ambil semua kolom sheet: leaf map (untuk validasi) + all IDs (untuk null-fill respons)
     const allColumns = await this.prisma.column.findMany({
@@ -180,12 +185,8 @@ export class SheetsService {
   }
 
   async updateRow(sheetId: string, rowId: string, dto: UpdateRowDto, userId: string) {
-    // 1. Sheet ada?
-    const sheet = await this.prisma.sheet.findUnique({
-      where: { id: sheetId },
-      select: { id: true },
-    });
-    if (!sheet) throw new NotFoundException('Sheet tidak ditemukan');
+    // 1. Sheet ada dan bisa ditulis?
+    await this.assertWritableSheet(sheetId);
 
     // 2. Row ada DAN milik sheet ini? (cegah edit baris sheet lain via path palsu)
     const row = await this.prisma.row.findUnique({
@@ -281,12 +282,8 @@ export class SheetsService {
   }
 
   async deleteRow(sheetId: string, rowId: string, userId: string) {
-    // 1. Sheet ada?
-    const sheet = await this.prisma.sheet.findUnique({
-      where: { id: sheetId },
-      select: { id: true },
-    });
-    if (!sheet) throw new NotFoundException('Sheet tidak ditemukan');
+    // 1. Sheet ada dan bisa ditulis?
+    await this.assertWritableSheet(sheetId);
 
     // 2. Row ada DAN milik sheet ini? (cegah hapus baris sheet lain via path palsu)
     const row = await this.prisma.row.findUnique({
