@@ -289,7 +289,13 @@ export class ImportsService {
       const em = e.match(/^([A-Z]+)(\d+)$/);
       if (!sm || !em) continue;
       if (parseInt(sm[2]) !== DTPS_MAIN_HEADER_ROW) continue;
-      mergeMap.set(colLetterToNum(sm[1]), colLetterToNum(em[1]));
+      const startCol = colLetterToNum(sm[1]);
+      const endCol   = colLetterToNum(em[1]);
+      // Abaikan merge VERTIKAL (A2:A3, B2:B3, E2:E3) — endCol === startCol.
+      // Hanya merge HORIZONTAL (C2:D2 = Kualifikasi Akademik) yang menjadi node grup.
+      // Merge vertikal hanya memengaruhi tampilan header; tidak memengaruhi indeks kolom data.
+      if (endCol <= startCol) continue;
+      mergeMap.set(startCol, endCol);
     }
 
     const mainRow = worksheet.getRow(DTPS_MAIN_HEADER_ROW);
