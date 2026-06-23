@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ThrottlerExceptionFilter } from './auth/filters/throttler-exception.filter';
 
@@ -30,9 +31,24 @@ async function bootstrap() {
     credentials: true,
   });
 
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('Arsip LAMTEK API')
+    .setDescription(
+      'API untuk sistem dokumentasi & arsip akreditasi LAMTEK.\n\n' +
+      '**Auth:** `POST /auth/login` → salin `accessToken` dari respons → klik **Authorize** → isi `Bearer <token>`.',
+    )
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('api/docs', app, document, {
+    swaggerOptions: { persistAuthorization: true },
+  });
+
   const port = process.env['PORT'] ?? 3000;
   await app.listen(port);
   console.log(`Application running on port ${port}`);
+  console.log(`Swagger docs: http://localhost:${port}/api/docs`);
 }
 
 bootstrap();
