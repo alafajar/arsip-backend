@@ -72,7 +72,6 @@ function colNumToLetter(n: number): string {
  * Ambil teks tampilan dari cell ExcelJS.
  * Memakai `.text` (bukan `.value`) agar format dipertahankan —
  * khususnya NIDN "0017026012" yang disimpan dengan nol di depan.
- * Untuk cell formula: `.text` mengembalikan nilai cached (hasil kalkulasi).
  */
 function getCellText(cell: ExcelJS.Cell): string {
   if (
@@ -80,11 +79,25 @@ function getCellText(cell: ExcelJS.Cell): string {
     cell.type === ExcelJS.ValueType.Null ||
     cell.type === ExcelJS.ValueType.Merge
   ) return '';
+
+  // Sel formula: cell.value adalah objek { formula, result } — JANGAN String() langsung.
+  if (cell.type === ExcelJS.ValueType.Formula) {
+    const result = (cell.value as ExcelJS.CellFormulaValue).result;
+    if (result === null || result === undefined) return '';
+    if (result instanceof Date) return cell.text?.trim() || result.toISOString();
+    // Error formula (mis. #DIV/0!) atau objek tak dikenal — kembalikan kosong.
+    if (typeof result === 'object') return '';
+    // Pakai cell.text agar numFmt Excel dihormati (mis. "8,7" bukan "8.666...").
+    return (cell.text && String(cell.text).trim()) || String(result).trim();
+  }
+
   const text = cell.text;
   if (text !== null && text !== undefined && String(text).trim() !== '') {
     return String(text).trim();
   }
   if (cell.value === null || cell.value === undefined) return '';
+  // Guard: jangan stringify objek — kembalikan kosong bila value bukan primitif.
+  if (typeof cell.value === 'object') return '';
   return String(cell.value).trim();
 }
 
@@ -516,10 +529,17 @@ export class ImportsService {
       .filter((c) => c.rowId && c.columnId);
     if (cellInserts.length > 0) await tx.cell.createMany({ data: cellInserts });
 
-    // CellMerge (batch) — representasi visual merge untuk frontend
+    // CellMerge (batch) — koordinat dinormalisasi ke orderIndex (relatif, 1-based)
+    // agar selaras dengan Row.orderIndex dan Column.orderIndex.
     if (merges.length > 0) {
       await tx.cellMerge.createMany({
-        data: merges.map((m) => ({ sheetId, ...m })),
+        data: merges.map((m) => ({
+          sheetId,
+          startRow: m.startRow - firstRow + 1,
+          endRow:   m.endRow   - firstRow + 1,
+          startCol: m.startCol - firstCol + 1,
+          endCol:   m.endCol   - firstCol + 1,
+        })),
       });
     }
   }

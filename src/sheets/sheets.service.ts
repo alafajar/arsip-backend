@@ -335,6 +335,16 @@ export class SheetsService {
       },
     });
     if (!sheet) throw new NotFoundException('Sheet tidak ditemukan');
-    return sheet;
+
+    if (!sheet.isReadOnly) return sheet;
+
+    // Grid-mirror: sertakan merges (koordinat relatif, selaras orderIndex).
+    const merges = await this.prisma.cellMerge.findMany({
+      where: { sheetId: id },
+      select: { startRow: true, endRow: true, startCol: true, endCol: true },
+      orderBy: [{ startRow: 'asc' }, { startCol: 'asc' }],
+    });
+
+    return { ...sheet, merges };
   }
 }
