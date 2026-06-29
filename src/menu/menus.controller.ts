@@ -36,6 +36,15 @@ export class MenusController {
     return this.menusService.getTree();
   }
 
+  @Get(':id/path')
+  @ApiOperation({ summary: 'Jalur ancestor node menu (breadcrumb)', description: 'Mengembalikan array `{ id, name }` dari root hingga node target (inklusif), terurut root-pertama.' })
+  @ApiParam({ name: 'id', description: 'UUID node menu target' })
+  @ApiResponse({ status: 200, description: 'Array ancestor terurut.' })
+  @ApiResponse({ status: 404, description: 'Node tidak ditemukan.' })
+  getPath(@Param('id', ParseUUIDPipe) id: string) {
+    return this.menusService.getPath(id);
+  }
+
   @Post()
   @Roles(Role.ADMIN)
   @HttpCode(HttpStatus.CREATED)
