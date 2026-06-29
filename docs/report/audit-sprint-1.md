@@ -1,9 +1,9 @@
 # Audit Sprint 1 — Sistem Dokumentasi & Arsip Akreditasi (Backend)
 
-**Tanggal Audit:** 2026-06-20
+**Tanggal Audit:** 2026-06-20 — **Diperbarui:** 2026-06-27 (lihat Addendum #2)
 **Auditor:** Staff Software Engineer / Solution Architect Review
 **Cakupan:** Backend NestJS 11 + Prisma 7 + PostgreSQL 17 (Sprint 1 deliverables)
-**Total source files:** 36 file (~1,980 LOC di `src/`)
+**Total source files:** 35 file (~2,214 LOC di `src/` per 2026-06-27)
 
 ---
 
@@ -586,6 +586,92 @@ Closure T7 tidak menggeser skorcard di §12 secara material — ini perbaikan de
 
 ### Backlog Terkait (belum dikerjakan)
 - Validasi "columnId di body harus milik sheet yang sama" untuk `POST/PATCH /sheets/:id/rows` — mencegah tulis cell dengan kolom dari sheet lain via path palsu. Hardening terpisah, bukan bagian T7.
+
+---
+
+## Addendum Post-Audit #2 (2026-06-27)
+
+Tiga blok pekerjaan masuk **setelah** addendum T7 ditandatangani. Dicatat di sini agar
+jejak skor & temuan tetap dapat dilacak. Dua di antaranya menutup **bug korektabilitas yang
+luput dari audit asli** — dicatat jujur, sebagaimana T7.
+
+### T5 — DTPS parser: kolom merge-vertikal null (correctness bug, luput dari audit asli)
+- **Celah yang ditutup:** Kolom yang header-nya merge **vertikal** (No. `A2:A3`, Nama Dosen
+  `B2:B3`, Jabatan Akademik `E2:E3`) menghasilkan **null di semua 24 baris** DTPS. Penyebab:
+  `parseDtpsHeaders` memasukkan merge vertikal ke `mergeMap` → kolom diperlakukan sebagai
+  *grup tanpa anak* → tersaring keluar dari `leafCols` → Cell tidak pernah dibuat.
+- **Catatan jujur:** §1 audit asli menyatakan "Tabel DTPS tampil benar" dan DoD #4 lulus.
+  Faktanya tiga kolom kunci kosong. Audit asli **tidak memverifikasi isi baris data DTPS**
+  secara sel-per-sel — hanya header & NIDN. Ini gap pelacakan kami, bukan temuan baru yang
+  muncul belakangan.
+- **Fix:** satu guard `if (endCol <= startCol) continue;` di `parseDtpsHeaders`
+  (`imports.service.ts:310`) — merge vertikal diabaikan, kolom diperlakukan sebagai leaf biasa.
+- **File:** `src/imports/imports.service.ts`, `docs/tasks/005-fix-dtps-parser.md`.
+
+### T8 — Grid-mirror import: sel formula & ekspos `CellMerge`
+Menutup **dua** item sekaligus: satu bug korektabilitas (Bug B) dan satu Missing Feature (Bug A).
+
+- **Bug B — `[object Object]` di sel formula (closes §7 M4, plus data-corruption yang luput).**
+  `getCellText` lama menjalankan `String(cell.value)` pada sel formula tanpa cached result.
+  `cell.value` adalah objek `{ formula, result }` → tersimpan literal `"[object Object]"` di DB
+  (mis. kolom "Rata-rata" AVERAGE pada sheet "20. Pembimbing TA"). Audit asli §7 M4 hanya
+  menandai "data formula hilang (aman)" — **meremehkan**; kenyataannya nilai sampah tersimpan
+  permanen dan melanggar kontrak FE `cell: string | null`. Fix (`imports.service.ts:84-101`):
+  tangani `ValueType.Formula` eksplisit, baca `.result`, hormati `numFmt` via `cell.text`
+  (mis. `8,7` bukan `8.666…`), dan guard anti-stringify objek di fallback. Berlaku untuk jalur
+  DTPS **dan** grid-mirror.
+- **Bug A — ekspos `CellMerge` (closes §9 MF3 "High" + §10 MP2).**
+  Data merge sudah ditulis ke tabel `CellMerge` saat import tapi tidak pernah dikembalikan API,
+  sehingga frontend tak bisa merender rowspan/colspan sheet read-only. Sekarang `findById`
+  (`sheets.service.ts:339-348`) menyertakan `merges` **hanya** untuk sheet `isReadOnly: true`.
+- **Normalisasi koordinat (keputusan kunci):** ExcelJS melaporkan merge dalam koordinat Excel
+  **absolut**, sedangkan `Row/Column.orderIndex` ditulis **relatif** (1-based). Normalisasi
+  dilakukan **saat write** di `writeGridToTx` (`imports.service.ts:534-544`:
+  `startRow - firstRow + 1`, dst.) — `firstRow/firstCol` tersedia di sana tanpa menyimpan
+  metadata ekstra. Konsumen FE menerima koordinat yang langsung selaras grid.
+- **Konsekuensi data:** baris lama yang menyimpan `"[object Object]"` atau koordinat absolut
+  **wajib di-import ulang** — fix kode tidak menyentuh row yang sudah ada.
+- **File:** `src/imports/imports.service.ts`, `src/sheets/sheets.service.ts`,
+  `docs/tasks/008-fix-grid-mirror-import.md`.
+
+### Swagger / OpenAPI (developer experience)
+- `@nestjs/swagger` dipasang di `main.ts` (`/api/docs`, `persistAuthorization`, bearer auth) +
+  dekorator `@ApiTags/@ApiOperation/@ApiResponse` di controller **Auth, Imports, Menus, Sheets**
+  (21 anotasi di 4 file). API kini self-documenting; alur "login → Authorize → coba endpoint"
+  terdokumentasi inline.
+- **Sisa:** `HealthController` belum diberi tag (minor). Belum ada skema DTO response eksplisit
+  untuk beberapa endpoint (pakai `example` inline, bukan `@ApiOkResponse({ type })`).
+
+### Yang MASIH terbuka (re-verifikasi 2026-06-27 — tidak berubah sejak audit asli)
+Tidak ada satu pun dari gap struktural utama yang tersentuh:
+
+| Ref | Temuan | Status |
+|---|---|---|
+| §4.1 / Testing 3/10 | **0 file `.spec.ts`** | ❌ Masih nol — diverifikasi |
+| §4.2 / R3 | Stub module kosong (`cells`, `columns`, `rows`, `users`) | ❌ Masih ada |
+| §4.3 / R8 | `console.log` di `main.ts` | ❌ Masih ada (`main.ts:50-51`) |
+| §4.4 / R4 | Route uji `test-read` / `test-write` | ❌ **Masih ada** (`auth.controller.ts:83-97`) — kini malah ter-dokumentasi Swagger |
+| §4.6 / §7 H1 / R9 | Query log Prisma tak-kondisional | ❌ Masih `['query','info','warn','error']` (`prisma.service.ts:14`) |
+| §4.7 / R5 | `tx: any` di import | ❌ Masih ada (`imports.service.ts:437,493`) |
+| §4.16 | Import `BadRequestException` di imports | ⚠️ Audit asli menandai "sudah diperbaiki" — **keliru**; import masih ada & tak terpakai (`imports.service.ts:2`) |
+| §7 H2 | Global exception filter | ❌ Belum ada |
+| §7 H3 | Validasi env saat boot | ❌ Belum ada |
+
+### Dampak ke Skor Komposit
+Perubahan ini **korektabilitas + satu Missing Feature + dokumentasi** — bukan gap struktural
+(test, hardening prod) yang menahan skor. Penyesuaian (tidak diedit inline, agar jejak asli utuh):
+
+- **Code Quality** §6: +0.2 (6.9 → 7.1). Bug `[object Object]` adalah cacat integritas data nyata;
+  penanganan formula kini benar & defensif. Tapi Logging (4/10) & Testing (3/10) tak bergerak.
+- **Production Readiness** §12: tetap **5.5/10**. Tidak ada yang berubah di sumbu prod-readiness
+  (test, exception filter, env validation, structured log, query-log hardening semua masih terbuka).
+- **Missing Features** §9: MF3 (ekspos `CellMerge`, "High") → **closed**. MF1/MF2/MF4/MF5 tetap.
+- **Verdict satu kalimat tidak berubah:** layak demo & dipasangi frontend; **belum** layak
+  tinggalkan dev tanpa test suite + hardening.
+
+**Rekomendasi tunggal paling impactful tetap HP1 (Test Suite + CI).** Dua fix di addendum ini
+(merge-vertikal & `[object Object]`) keduanya bug yang **akan tertangkap unit test** atas
+`getCellText` / `parseDtpsHeaders` sebelum sampai produksi — bukti konkret kenapa §10 HP1 prioritas satu.
 
 ---
 
