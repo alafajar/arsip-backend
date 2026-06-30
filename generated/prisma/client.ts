@@ -85,6 +85,11 @@ export type Cell = Prisma.CellModel
  */
 export type CellMerge = Prisma.CellMergeModel
 /**
+ * Model SheetAggregate
+ * 
+ */
+export type SheetAggregate = Prisma.SheetAggregateModel
+/**
  * Model ChangeLog
  * 
  */

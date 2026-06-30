@@ -50,6 +50,14 @@ enum FormulaOp {
   MIN
 }
 
+enum AggregateOp {
+  SUM
+  AVERAGE
+  COUNT
+  MAX
+  MIN
+}
+
 // ============================ MODELS ============================
 
 model User {
@@ -126,11 +134,12 @@ model Sheet {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  menuItem     MenuItem     @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
-  sourceImport ExcelImport? @relation(fields: [sourceImportId], references: [id])
-  columns      Column[]
-  rows         Row[]
-  cellMerges   CellMerge[]
+  menuItem        MenuItem         @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  sourceImport    ExcelImport?     @relation(fields: [sourceImportId], references: [id])
+  columns         Column[]
+  rows            Row[]
+  cellMerges      CellMerge[]
+  sheetAggregates SheetAggregate[]
 
   @@index([menuItemId])
   @@map("sheets")
@@ -148,11 +157,12 @@ model Column {
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
 
-  sheet        Sheet    @relation(fields: [sheetId], references: [id], onDelete: Cascade)
+  sheet        Sheet            @relation(fields: [sheetId], references: [id], onDelete: Cascade)
   // self-reference: header bertingkat (mis. "Tingkat" -> Internasional/Nasional/Lokal)
-  parentColumn Column?  @relation("ColumnTree", fields: [parentColumnId], references: [id], onDelete: Cascade)
-  childColumns Column[] @relation("ColumnTree")
+  parentColumn Column?          @relation("ColumnTree", fields: [parentColumnId], references: [id], onDelete: Cascade)
+  childColumns Column[]         @relation("ColumnTree")
   cells        Cell[]
+  aggregates   SheetAggregate[]
 
   @@index([sheetId])
   @@index([parentColumnId])
@@ -201,6 +211,20 @@ model CellMerge {
 
   @@index([sheetId])
   @@map("cell_merges")
+}
+
+model SheetAggregate {
+  id             String      @id @default(uuid()) @db.Uuid
+  sheetId        String      @db.Uuid
+  targetColumnId String      @db.Uuid
+  op             AggregateOp
+
+  sheet        Sheet  @relation(fields: [sheetId], references: [id], onDelete: Cascade)
+  targetColumn Column @relation(fields: [targetColumnId], references: [id], onDelete: Cascade)
+
+  @@unique([sheetId, targetColumnId, op])
+  @@index([sheetId])
+  @@map("sheet_aggregates")
 }
 
 model ChangeLog {

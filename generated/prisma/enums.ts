@@ -61,3 +61,14 @@ export const FormulaOp = {
 } as const
 
 export type FormulaOp = (typeof FormulaOp)[keyof typeof FormulaOp]
+
+
+export const AggregateOp = {
+  SUM: 'SUM',
+  AVERAGE: 'AVERAGE',
+  COUNT: 'COUNT',
+  MAX: 'MAX',
+  MIN: 'MIN'
+} as const
+
+export type AggregateOp = (typeof AggregateOp)[keyof typeof AggregateOp]

@@ -60,6 +60,7 @@ export const ModelName = {
   Row: 'Row',
   Cell: 'Cell',
   CellMerge: 'CellMerge',
+  SheetAggregate: 'SheetAggregate',
   ChangeLog: 'ChangeLog'
 } as const
 
@@ -193,6 +194,16 @@ export const CellMergeScalarFieldEnum = {
 } as const
 
 export type CellMergeScalarFieldEnum = (typeof CellMergeScalarFieldEnum)[keyof typeof CellMergeScalarFieldEnum]
+
+
+export const SheetAggregateScalarFieldEnum = {
+  id: 'id',
+  sheetId: 'sheetId',
+  targetColumnId: 'targetColumnId',
+  op: 'op'
+} as const
+
+export type SheetAggregateScalarFieldEnum = (typeof SheetAggregateScalarFieldEnum)[keyof typeof SheetAggregateScalarFieldEnum]
 
 
 export const ChangeLogScalarFieldEnum = {

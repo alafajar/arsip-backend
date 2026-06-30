@@ -393,6 +393,7 @@ export const ModelName = {
   Row: 'Row',
   Cell: 'Cell',
   CellMerge: 'CellMerge',
+  SheetAggregate: 'SheetAggregate',
   ChangeLog: 'ChangeLog'
 } as const
 
@@ -409,7 +410,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "refreshToken" | "menuItem" | "excelImport" | "sheet" | "column" | "row" | "cell" | "cellMerge" | "changeLog"
+    modelProps: "user" | "refreshToken" | "menuItem" | "excelImport" | "sheet" | "column" | "row" | "cell" | "cellMerge" | "sheetAggregate" | "changeLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1079,6 +1080,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SheetAggregate: {
+      payload: Prisma.$SheetAggregatePayload<ExtArgs>
+      fields: Prisma.SheetAggregateFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SheetAggregateFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SheetAggregatePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SheetAggregateFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SheetAggregatePayload>
+        }
+        findFirst: {
+          args: Prisma.SheetAggregateFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SheetAggregatePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SheetAggregateFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SheetAggregatePayload>
+        }
+        findMany: {
+          args: Prisma.SheetAggregateFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SheetAggregatePayload>[]
+        }
+        create: {
+          args: Prisma.SheetAggregateCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SheetAggregatePayload>
+        }
+        createMany: {
+          args: Prisma.SheetAggregateCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SheetAggregateCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SheetAggregatePayload>[]
+        }
+        delete: {
+          args: Prisma.SheetAggregateDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SheetAggregatePayload>
+        }
+        update: {
+          args: Prisma.SheetAggregateUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SheetAggregatePayload>
+        }
+        deleteMany: {
+          args: Prisma.SheetAggregateDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SheetAggregateUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SheetAggregateUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SheetAggregatePayload>[]
+        }
+        upsert: {
+          args: Prisma.SheetAggregateUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SheetAggregatePayload>
+        }
+        aggregate: {
+          args: Prisma.SheetAggregateAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSheetAggregate>
+        }
+        groupBy: {
+          args: Prisma.SheetAggregateGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SheetAggregateGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SheetAggregateCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SheetAggregateCountAggregateOutputType> | number
+        }
+      }
+    }
     ChangeLog: {
       payload: Prisma.$ChangeLogPayload<ExtArgs>
       fields: Prisma.ChangeLogFieldRefs
@@ -1308,6 +1383,16 @@ export const CellMergeScalarFieldEnum = {
 export type CellMergeScalarFieldEnum = (typeof CellMergeScalarFieldEnum)[keyof typeof CellMergeScalarFieldEnum]
 
 
+export const SheetAggregateScalarFieldEnum = {
+  id: 'id',
+  sheetId: 'sheetId',
+  targetColumnId: 'targetColumnId',
+  op: 'op'
+} as const
+
+export type SheetAggregateScalarFieldEnum = (typeof SheetAggregateScalarFieldEnum)[keyof typeof SheetAggregateScalarFieldEnum]
+
+
 export const ChangeLogScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -1475,6 +1560,20 @@ export type ListEnumFormulaOpFieldRefInput<$PrismaModel> = FieldRefInputType<$Pr
 
 
 /**
+ * Reference to a field of type 'AggregateOp'
+ */
+export type EnumAggregateOpFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AggregateOp'>
+    
+
+
+/**
+ * Reference to a field of type 'AggregateOp[]'
+ */
+export type ListEnumAggregateOpFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AggregateOp[]'>
+    
+
+
+/**
  * Reference to a field of type 'ChangeAction'
  */
 export type EnumChangeActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChangeAction'>
@@ -1634,6 +1733,7 @@ export type GlobalOmitConfig = {
   row?: Prisma.RowOmit
   cell?: Prisma.CellOmit
   cellMerge?: Prisma.CellMergeOmit
+  sheetAggregate?: Prisma.SheetAggregateOmit
   changeLog?: Prisma.ChangeLogOmit
 }
 

@@ -245,6 +245,7 @@ export type SheetWhereInput = {
   columns?: Prisma.ColumnListRelationFilter
   rows?: Prisma.RowListRelationFilter
   cellMerges?: Prisma.CellMergeListRelationFilter
+  sheetAggregates?: Prisma.SheetAggregateListRelationFilter
 }
 
 export type SheetOrderByWithRelationInput = {
@@ -261,6 +262,7 @@ export type SheetOrderByWithRelationInput = {
   columns?: Prisma.ColumnOrderByRelationAggregateInput
   rows?: Prisma.RowOrderByRelationAggregateInput
   cellMerges?: Prisma.CellMergeOrderByRelationAggregateInput
+  sheetAggregates?: Prisma.SheetAggregateOrderByRelationAggregateInput
 }
 
 export type SheetWhereUniqueInput = Prisma.AtLeast<{
@@ -280,6 +282,7 @@ export type SheetWhereUniqueInput = Prisma.AtLeast<{
   columns?: Prisma.ColumnListRelationFilter
   rows?: Prisma.RowListRelationFilter
   cellMerges?: Prisma.CellMergeListRelationFilter
+  sheetAggregates?: Prisma.SheetAggregateListRelationFilter
 }, "id">
 
 export type SheetOrderByWithAggregationInput = {
@@ -324,6 +327,7 @@ export type SheetCreateInput = {
   columns?: Prisma.ColumnCreateNestedManyWithoutSheetInput
   rows?: Prisma.RowCreateNestedManyWithoutSheetInput
   cellMerges?: Prisma.CellMergeCreateNestedManyWithoutSheetInput
+  sheetAggregates?: Prisma.SheetAggregateCreateNestedManyWithoutSheetInput
 }
 
 export type SheetUncheckedCreateInput = {
@@ -338,6 +342,7 @@ export type SheetUncheckedCreateInput = {
   columns?: Prisma.ColumnUncheckedCreateNestedManyWithoutSheetInput
   rows?: Prisma.RowUncheckedCreateNestedManyWithoutSheetInput
   cellMerges?: Prisma.CellMergeUncheckedCreateNestedManyWithoutSheetInput
+  sheetAggregates?: Prisma.SheetAggregateUncheckedCreateNestedManyWithoutSheetInput
 }
 
 export type SheetUpdateInput = {
@@ -352,6 +357,7 @@ export type SheetUpdateInput = {
   columns?: Prisma.ColumnUpdateManyWithoutSheetNestedInput
   rows?: Prisma.RowUpdateManyWithoutSheetNestedInput
   cellMerges?: Prisma.CellMergeUpdateManyWithoutSheetNestedInput
+  sheetAggregates?: Prisma.SheetAggregateUpdateManyWithoutSheetNestedInput
 }
 
 export type SheetUncheckedUpdateInput = {
@@ -366,6 +372,7 @@ export type SheetUncheckedUpdateInput = {
   columns?: Prisma.ColumnUncheckedUpdateManyWithoutSheetNestedInput
   rows?: Prisma.RowUncheckedUpdateManyWithoutSheetNestedInput
   cellMerges?: Prisma.CellMergeUncheckedUpdateManyWithoutSheetNestedInput
+  sheetAggregates?: Prisma.SheetAggregateUncheckedUpdateManyWithoutSheetNestedInput
 }
 
 export type SheetCreateManyInput = {
@@ -581,6 +588,20 @@ export type SheetUpdateOneRequiredWithoutCellMergesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.SheetUpdateToOneWithWhereWithoutCellMergesInput, Prisma.SheetUpdateWithoutCellMergesInput>, Prisma.SheetUncheckedUpdateWithoutCellMergesInput>
 }
 
+export type SheetCreateNestedOneWithoutSheetAggregatesInput = {
+  create?: Prisma.XOR<Prisma.SheetCreateWithoutSheetAggregatesInput, Prisma.SheetUncheckedCreateWithoutSheetAggregatesInput>
+  connectOrCreate?: Prisma.SheetCreateOrConnectWithoutSheetAggregatesInput
+  connect?: Prisma.SheetWhereUniqueInput
+}
+
+export type SheetUpdateOneRequiredWithoutSheetAggregatesNestedInput = {
+  create?: Prisma.XOR<Prisma.SheetCreateWithoutSheetAggregatesInput, Prisma.SheetUncheckedCreateWithoutSheetAggregatesInput>
+  connectOrCreate?: Prisma.SheetCreateOrConnectWithoutSheetAggregatesInput
+  upsert?: Prisma.SheetUpsertWithoutSheetAggregatesInput
+  connect?: Prisma.SheetWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SheetUpdateToOneWithWhereWithoutSheetAggregatesInput, Prisma.SheetUpdateWithoutSheetAggregatesInput>, Prisma.SheetUncheckedUpdateWithoutSheetAggregatesInput>
+}
+
 export type SheetCreateWithoutMenuItemInput = {
   id?: string
   name: string
@@ -592,6 +613,7 @@ export type SheetCreateWithoutMenuItemInput = {
   columns?: Prisma.ColumnCreateNestedManyWithoutSheetInput
   rows?: Prisma.RowCreateNestedManyWithoutSheetInput
   cellMerges?: Prisma.CellMergeCreateNestedManyWithoutSheetInput
+  sheetAggregates?: Prisma.SheetAggregateCreateNestedManyWithoutSheetInput
 }
 
 export type SheetUncheckedCreateWithoutMenuItemInput = {
@@ -605,6 +627,7 @@ export type SheetUncheckedCreateWithoutMenuItemInput = {
   columns?: Prisma.ColumnUncheckedCreateNestedManyWithoutSheetInput
   rows?: Prisma.RowUncheckedCreateNestedManyWithoutSheetInput
   cellMerges?: Prisma.CellMergeUncheckedCreateNestedManyWithoutSheetInput
+  sheetAggregates?: Prisma.SheetAggregateUncheckedCreateNestedManyWithoutSheetInput
 }
 
 export type SheetCreateOrConnectWithoutMenuItemInput = {
@@ -658,6 +681,7 @@ export type SheetCreateWithoutSourceImportInput = {
   columns?: Prisma.ColumnCreateNestedManyWithoutSheetInput
   rows?: Prisma.RowCreateNestedManyWithoutSheetInput
   cellMerges?: Prisma.CellMergeCreateNestedManyWithoutSheetInput
+  sheetAggregates?: Prisma.SheetAggregateCreateNestedManyWithoutSheetInput
 }
 
 export type SheetUncheckedCreateWithoutSourceImportInput = {
@@ -671,6 +695,7 @@ export type SheetUncheckedCreateWithoutSourceImportInput = {
   columns?: Prisma.ColumnUncheckedCreateNestedManyWithoutSheetInput
   rows?: Prisma.RowUncheckedCreateNestedManyWithoutSheetInput
   cellMerges?: Prisma.CellMergeUncheckedCreateNestedManyWithoutSheetInput
+  sheetAggregates?: Prisma.SheetAggregateUncheckedCreateNestedManyWithoutSheetInput
 }
 
 export type SheetCreateOrConnectWithoutSourceImportInput = {
@@ -710,6 +735,7 @@ export type SheetCreateWithoutColumnsInput = {
   sourceImport?: Prisma.ExcelImportCreateNestedOneWithoutSheetsInput
   rows?: Prisma.RowCreateNestedManyWithoutSheetInput
   cellMerges?: Prisma.CellMergeCreateNestedManyWithoutSheetInput
+  sheetAggregates?: Prisma.SheetAggregateCreateNestedManyWithoutSheetInput
 }
 
 export type SheetUncheckedCreateWithoutColumnsInput = {
@@ -723,6 +749,7 @@ export type SheetUncheckedCreateWithoutColumnsInput = {
   updatedAt?: Date | string
   rows?: Prisma.RowUncheckedCreateNestedManyWithoutSheetInput
   cellMerges?: Prisma.CellMergeUncheckedCreateNestedManyWithoutSheetInput
+  sheetAggregates?: Prisma.SheetAggregateUncheckedCreateNestedManyWithoutSheetInput
 }
 
 export type SheetCreateOrConnectWithoutColumnsInput = {
@@ -752,6 +779,7 @@ export type SheetUpdateWithoutColumnsInput = {
   sourceImport?: Prisma.ExcelImportUpdateOneWithoutSheetsNestedInput
   rows?: Prisma.RowUpdateManyWithoutSheetNestedInput
   cellMerges?: Prisma.CellMergeUpdateManyWithoutSheetNestedInput
+  sheetAggregates?: Prisma.SheetAggregateUpdateManyWithoutSheetNestedInput
 }
 
 export type SheetUncheckedUpdateWithoutColumnsInput = {
@@ -765,6 +793,7 @@ export type SheetUncheckedUpdateWithoutColumnsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   rows?: Prisma.RowUncheckedUpdateManyWithoutSheetNestedInput
   cellMerges?: Prisma.CellMergeUncheckedUpdateManyWithoutSheetNestedInput
+  sheetAggregates?: Prisma.SheetAggregateUncheckedUpdateManyWithoutSheetNestedInput
 }
 
 export type SheetCreateWithoutRowsInput = {
@@ -778,6 +807,7 @@ export type SheetCreateWithoutRowsInput = {
   sourceImport?: Prisma.ExcelImportCreateNestedOneWithoutSheetsInput
   columns?: Prisma.ColumnCreateNestedManyWithoutSheetInput
   cellMerges?: Prisma.CellMergeCreateNestedManyWithoutSheetInput
+  sheetAggregates?: Prisma.SheetAggregateCreateNestedManyWithoutSheetInput
 }
 
 export type SheetUncheckedCreateWithoutRowsInput = {
@@ -791,6 +821,7 @@ export type SheetUncheckedCreateWithoutRowsInput = {
   updatedAt?: Date | string
   columns?: Prisma.ColumnUncheckedCreateNestedManyWithoutSheetInput
   cellMerges?: Prisma.CellMergeUncheckedCreateNestedManyWithoutSheetInput
+  sheetAggregates?: Prisma.SheetAggregateUncheckedCreateNestedManyWithoutSheetInput
 }
 
 export type SheetCreateOrConnectWithoutRowsInput = {
@@ -820,6 +851,7 @@ export type SheetUpdateWithoutRowsInput = {
   sourceImport?: Prisma.ExcelImportUpdateOneWithoutSheetsNestedInput
   columns?: Prisma.ColumnUpdateManyWithoutSheetNestedInput
   cellMerges?: Prisma.CellMergeUpdateManyWithoutSheetNestedInput
+  sheetAggregates?: Prisma.SheetAggregateUpdateManyWithoutSheetNestedInput
 }
 
 export type SheetUncheckedUpdateWithoutRowsInput = {
@@ -833,6 +865,7 @@ export type SheetUncheckedUpdateWithoutRowsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   columns?: Prisma.ColumnUncheckedUpdateManyWithoutSheetNestedInput
   cellMerges?: Prisma.CellMergeUncheckedUpdateManyWithoutSheetNestedInput
+  sheetAggregates?: Prisma.SheetAggregateUncheckedUpdateManyWithoutSheetNestedInput
 }
 
 export type SheetCreateWithoutCellMergesInput = {
@@ -846,6 +879,7 @@ export type SheetCreateWithoutCellMergesInput = {
   sourceImport?: Prisma.ExcelImportCreateNestedOneWithoutSheetsInput
   columns?: Prisma.ColumnCreateNestedManyWithoutSheetInput
   rows?: Prisma.RowCreateNestedManyWithoutSheetInput
+  sheetAggregates?: Prisma.SheetAggregateCreateNestedManyWithoutSheetInput
 }
 
 export type SheetUncheckedCreateWithoutCellMergesInput = {
@@ -859,6 +893,7 @@ export type SheetUncheckedCreateWithoutCellMergesInput = {
   updatedAt?: Date | string
   columns?: Prisma.ColumnUncheckedCreateNestedManyWithoutSheetInput
   rows?: Prisma.RowUncheckedCreateNestedManyWithoutSheetInput
+  sheetAggregates?: Prisma.SheetAggregateUncheckedCreateNestedManyWithoutSheetInput
 }
 
 export type SheetCreateOrConnectWithoutCellMergesInput = {
@@ -888,6 +923,7 @@ export type SheetUpdateWithoutCellMergesInput = {
   sourceImport?: Prisma.ExcelImportUpdateOneWithoutSheetsNestedInput
   columns?: Prisma.ColumnUpdateManyWithoutSheetNestedInput
   rows?: Prisma.RowUpdateManyWithoutSheetNestedInput
+  sheetAggregates?: Prisma.SheetAggregateUpdateManyWithoutSheetNestedInput
 }
 
 export type SheetUncheckedUpdateWithoutCellMergesInput = {
@@ -901,6 +937,79 @@ export type SheetUncheckedUpdateWithoutCellMergesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   columns?: Prisma.ColumnUncheckedUpdateManyWithoutSheetNestedInput
   rows?: Prisma.RowUncheckedUpdateManyWithoutSheetNestedInput
+  sheetAggregates?: Prisma.SheetAggregateUncheckedUpdateManyWithoutSheetNestedInput
+}
+
+export type SheetCreateWithoutSheetAggregatesInput = {
+  id?: string
+  name: string
+  orderIndex?: number
+  isReadOnly?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  menuItem: Prisma.MenuItemCreateNestedOneWithoutSheetsInput
+  sourceImport?: Prisma.ExcelImportCreateNestedOneWithoutSheetsInput
+  columns?: Prisma.ColumnCreateNestedManyWithoutSheetInput
+  rows?: Prisma.RowCreateNestedManyWithoutSheetInput
+  cellMerges?: Prisma.CellMergeCreateNestedManyWithoutSheetInput
+}
+
+export type SheetUncheckedCreateWithoutSheetAggregatesInput = {
+  id?: string
+  menuItemId: string
+  sourceImportId?: string | null
+  name: string
+  orderIndex?: number
+  isReadOnly?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  columns?: Prisma.ColumnUncheckedCreateNestedManyWithoutSheetInput
+  rows?: Prisma.RowUncheckedCreateNestedManyWithoutSheetInput
+  cellMerges?: Prisma.CellMergeUncheckedCreateNestedManyWithoutSheetInput
+}
+
+export type SheetCreateOrConnectWithoutSheetAggregatesInput = {
+  where: Prisma.SheetWhereUniqueInput
+  create: Prisma.XOR<Prisma.SheetCreateWithoutSheetAggregatesInput, Prisma.SheetUncheckedCreateWithoutSheetAggregatesInput>
+}
+
+export type SheetUpsertWithoutSheetAggregatesInput = {
+  update: Prisma.XOR<Prisma.SheetUpdateWithoutSheetAggregatesInput, Prisma.SheetUncheckedUpdateWithoutSheetAggregatesInput>
+  create: Prisma.XOR<Prisma.SheetCreateWithoutSheetAggregatesInput, Prisma.SheetUncheckedCreateWithoutSheetAggregatesInput>
+  where?: Prisma.SheetWhereInput
+}
+
+export type SheetUpdateToOneWithWhereWithoutSheetAggregatesInput = {
+  where?: Prisma.SheetWhereInput
+  data: Prisma.XOR<Prisma.SheetUpdateWithoutSheetAggregatesInput, Prisma.SheetUncheckedUpdateWithoutSheetAggregatesInput>
+}
+
+export type SheetUpdateWithoutSheetAggregatesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  orderIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  isReadOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  menuItem?: Prisma.MenuItemUpdateOneRequiredWithoutSheetsNestedInput
+  sourceImport?: Prisma.ExcelImportUpdateOneWithoutSheetsNestedInput
+  columns?: Prisma.ColumnUpdateManyWithoutSheetNestedInput
+  rows?: Prisma.RowUpdateManyWithoutSheetNestedInput
+  cellMerges?: Prisma.CellMergeUpdateManyWithoutSheetNestedInput
+}
+
+export type SheetUncheckedUpdateWithoutSheetAggregatesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  menuItemId?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceImportId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  orderIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  isReadOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  columns?: Prisma.ColumnUncheckedUpdateManyWithoutSheetNestedInput
+  rows?: Prisma.RowUncheckedUpdateManyWithoutSheetNestedInput
+  cellMerges?: Prisma.CellMergeUncheckedUpdateManyWithoutSheetNestedInput
 }
 
 export type SheetCreateManyMenuItemInput = {
@@ -924,6 +1033,7 @@ export type SheetUpdateWithoutMenuItemInput = {
   columns?: Prisma.ColumnUpdateManyWithoutSheetNestedInput
   rows?: Prisma.RowUpdateManyWithoutSheetNestedInput
   cellMerges?: Prisma.CellMergeUpdateManyWithoutSheetNestedInput
+  sheetAggregates?: Prisma.SheetAggregateUpdateManyWithoutSheetNestedInput
 }
 
 export type SheetUncheckedUpdateWithoutMenuItemInput = {
@@ -937,6 +1047,7 @@ export type SheetUncheckedUpdateWithoutMenuItemInput = {
   columns?: Prisma.ColumnUncheckedUpdateManyWithoutSheetNestedInput
   rows?: Prisma.RowUncheckedUpdateManyWithoutSheetNestedInput
   cellMerges?: Prisma.CellMergeUncheckedUpdateManyWithoutSheetNestedInput
+  sheetAggregates?: Prisma.SheetAggregateUncheckedUpdateManyWithoutSheetNestedInput
 }
 
 export type SheetUncheckedUpdateManyWithoutMenuItemInput = {
@@ -970,6 +1081,7 @@ export type SheetUpdateWithoutSourceImportInput = {
   columns?: Prisma.ColumnUpdateManyWithoutSheetNestedInput
   rows?: Prisma.RowUpdateManyWithoutSheetNestedInput
   cellMerges?: Prisma.CellMergeUpdateManyWithoutSheetNestedInput
+  sheetAggregates?: Prisma.SheetAggregateUpdateManyWithoutSheetNestedInput
 }
 
 export type SheetUncheckedUpdateWithoutSourceImportInput = {
@@ -983,6 +1095,7 @@ export type SheetUncheckedUpdateWithoutSourceImportInput = {
   columns?: Prisma.ColumnUncheckedUpdateManyWithoutSheetNestedInput
   rows?: Prisma.RowUncheckedUpdateManyWithoutSheetNestedInput
   cellMerges?: Prisma.CellMergeUncheckedUpdateManyWithoutSheetNestedInput
+  sheetAggregates?: Prisma.SheetAggregateUncheckedUpdateManyWithoutSheetNestedInput
 }
 
 export type SheetUncheckedUpdateManyWithoutSourceImportInput = {
@@ -1004,12 +1117,14 @@ export type SheetCountOutputType = {
   columns: number
   rows: number
   cellMerges: number
+  sheetAggregates: number
 }
 
 export type SheetCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   columns?: boolean | SheetCountOutputTypeCountColumnsArgs
   rows?: boolean | SheetCountOutputTypeCountRowsArgs
   cellMerges?: boolean | SheetCountOutputTypeCountCellMergesArgs
+  sheetAggregates?: boolean | SheetCountOutputTypeCountSheetAggregatesArgs
 }
 
 /**
@@ -1043,6 +1158,13 @@ export type SheetCountOutputTypeCountCellMergesArgs<ExtArgs extends runtime.Type
   where?: Prisma.CellMergeWhereInput
 }
 
+/**
+ * SheetCountOutputType without action
+ */
+export type SheetCountOutputTypeCountSheetAggregatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SheetAggregateWhereInput
+}
+
 
 export type SheetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1058,6 +1180,7 @@ export type SheetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   columns?: boolean | Prisma.Sheet$columnsArgs<ExtArgs>
   rows?: boolean | Prisma.Sheet$rowsArgs<ExtArgs>
   cellMerges?: boolean | Prisma.Sheet$cellMergesArgs<ExtArgs>
+  sheetAggregates?: boolean | Prisma.Sheet$sheetAggregatesArgs<ExtArgs>
   _count?: boolean | Prisma.SheetCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sheet"]>
 
@@ -1105,6 +1228,7 @@ export type SheetInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   columns?: boolean | Prisma.Sheet$columnsArgs<ExtArgs>
   rows?: boolean | Prisma.Sheet$rowsArgs<ExtArgs>
   cellMerges?: boolean | Prisma.Sheet$cellMergesArgs<ExtArgs>
+  sheetAggregates?: boolean | Prisma.Sheet$sheetAggregatesArgs<ExtArgs>
   _count?: boolean | Prisma.SheetCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SheetIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1124,6 +1248,7 @@ export type $SheetPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     columns: Prisma.$ColumnPayload<ExtArgs>[]
     rows: Prisma.$RowPayload<ExtArgs>[]
     cellMerges: Prisma.$CellMergePayload<ExtArgs>[]
+    sheetAggregates: Prisma.$SheetAggregatePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1533,6 +1658,7 @@ export interface Prisma__SheetClient<T, Null = never, ExtArgs extends runtime.Ty
   columns<T extends Prisma.Sheet$columnsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Sheet$columnsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ColumnPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   rows<T extends Prisma.Sheet$rowsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Sheet$rowsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RowPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   cellMerges<T extends Prisma.Sheet$cellMergesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Sheet$cellMergesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CellMergePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  sheetAggregates<T extends Prisma.Sheet$sheetAggregatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Sheet$sheetAggregatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SheetAggregatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2059,6 +2185,30 @@ export type Sheet$cellMergesArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   distinct?: Prisma.CellMergeScalarFieldEnum | Prisma.CellMergeScalarFieldEnum[]
+}
+
+/**
+ * Sheet.sheetAggregates
+ */
+export type Sheet$sheetAggregatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SheetAggregate
+   */
+  select?: Prisma.SheetAggregateSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SheetAggregate
+   */
+  omit?: Prisma.SheetAggregateOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SheetAggregateInclude<ExtArgs> | null
+  where?: Prisma.SheetAggregateWhereInput
+  orderBy?: Prisma.SheetAggregateOrderByWithRelationInput | Prisma.SheetAggregateOrderByWithRelationInput[]
+  cursor?: Prisma.SheetAggregateWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SheetAggregateScalarFieldEnum | Prisma.SheetAggregateScalarFieldEnum[]
 }
 
 /**

@@ -11,6 +11,7 @@ import { ColumnsModule } from './columns/columns.module';
 import { RowsModule } from './rows/rows.module';
 import { CellsModule } from './cells/cells.module';
 import { ImportsModule } from './imports/imports.module';
+import { AggregatesModule } from './aggregates/aggregates.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { ImportsModule } from './imports/imports.module';
     RowsModule,
     CellsModule,
     ImportsModule,
+    AggregatesModule,
   ],
   controllers: [HealthController],
 })

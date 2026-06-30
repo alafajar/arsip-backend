@@ -3,6 +3,7 @@ import { ChangeAction, ColumnType } from '../../generated/prisma/client';
 import { FormulaOp } from '../../generated/prisma/enums';
 import { PrismaService } from '../prisma/prisma.service';
 import { validateValueForType } from '../columns/column-value.validator';
+import { computeVerticalAggregate } from '../aggregates/aggregates.service';
 import { CreateRowDto } from './dto/create-row.dto';
 import { CreateSheetDto } from './dto/create-sheet.dto';
 import { UpdateRowDto } from './dto/update-row.dto';
@@ -206,7 +207,36 @@ export class SheetsService {
       return { rowId: row.id, orderIndex: row.orderIndex, cells };
     });
 
-    return { rows, total, limit: safeLimit, offset: safeOffset };
+    // Hitung nilai agregat dari SELURUH baris (bukan hanya halaman aktif)
+    const aggregateDefs = await this.prisma.sheetAggregate.findMany({
+      where: { sheetId },
+      select: { id: true, targetColumnId: true, op: true },
+      orderBy: [{ targetColumnId: 'asc' }, { op: 'asc' }],
+    });
+
+    let aggregates: { id: string; columnId: string; op: string; value: string }[] = [];
+    if (aggregateDefs.length > 0) {
+      const uniqueColIds = [...new Set(aggregateDefs.map((d) => d.targetColumnId))];
+      const cellsByColumn = new Map<string, (string | null)[]>();
+      await Promise.all(
+        uniqueColIds.map(async (colId) => {
+          const cells = await this.prisma.cell.findMany({
+            where: { columnId: colId },
+            select: { value: true },
+          });
+          cellsByColumn.set(colId, cells.map((c) => c.value ?? null));
+        }),
+      );
+
+      aggregates = aggregateDefs.map((def) => ({
+        id: def.id,
+        columnId: def.targetColumnId,
+        op: def.op as string,
+        value: computeVerticalAggregate(def.op, cellsByColumn.get(def.targetColumnId) ?? []),
+      }));
+    }
+
+    return { rows, total, limit: safeLimit, offset: safeOffset, aggregates };
   }
 
   private async assertWritableSheet(sheetId: string): Promise<void> {
