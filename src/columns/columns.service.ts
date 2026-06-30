@@ -1,8 +1,16 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { ChangeAction } from '../../generated/prisma/client';
+import { ChangeAction, ColumnType } from '../../generated/prisma/client';
+import { FormulaOp } from '../../generated/prisma/enums';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateColumnDto } from './dto/create-column.dto';
 import { UpdateColumnDto } from './dto/update-column.dto';
+
+// Operasi yang membutuhkan operand bertipe numerik (INTEGER/FLOAT).
+// COUNT dikecualikan: menghitung entri valid, bukan menjumlahkan nilainya.
+const NUMERIC_OPS = new Set<FormulaOp>([
+  FormulaOp.ADD, FormulaOp.SUB, FormulaOp.MUL, FormulaOp.DIV,
+  FormulaOp.SUM, FormulaOp.AVERAGE, FormulaOp.MAX, FormulaOp.MIN,
+]);
 
 @Injectable()
 export class ColumnsService {
@@ -17,10 +25,91 @@ export class ColumnsService {
     if (sheet.isReadOnly) throw new ConflictException('Sheet ini hanya-baca dan tidak bisa diubah');
   }
 
+  /**
+   * Validasi definisi formula sebelum disimpan.
+   * @param sheetId Sheet tempat kolom formula berada.
+   * @param selfColumnId ID kolom yang sedang dibuat/diupdate (null saat CREATE — ID belum ada).
+   * @param op Operasi formula.
+   * @param operandIds Daftar columnId sumber.
+   */
+  private async validateFormulaDefinition(
+    sheetId: string,
+    selfColumnId: string | null,
+    op: FormulaOp,
+    operandIds: string[],
+  ): Promise<void> {
+    // 1. Tidak boleh kosong
+    if (operandIds.length === 0) {
+      throw new BadRequestException('formulaOperandIds tidak boleh kosong');
+    }
+
+    // 2. SUB/DIV membutuhkan ≥ 2 operand (pairwise kiri→kanan)
+    if ((op === FormulaOp.SUB || op === FormulaOp.DIV) && operandIds.length < 2) {
+      throw new BadRequestException(`Operasi ${op} membutuhkan minimal 2 operand`);
+    }
+
+    // 3. Self-reference (hanya relevan saat UPDATE, karena saat CREATE ID belum ada)
+    if (selfColumnId && operandIds.includes(selfColumnId)) {
+      throw new BadRequestException('Kolom formula tidak boleh mereferensikan diri sendiri (self-reference)');
+    }
+
+    // Fetch semua kolom sheet sekaligus — satu query untuk validasi operand + tipe + siklus
+    const allCols = await this.prisma.column.findMany({
+      where: { sheetId },
+      select: { id: true, name: true, type: true, formulaOp: true, formulaOperandIds: true },
+    });
+    const colMap = new Map(allCols.map((c) => [c.id, c]));
+
+    // 4. Setiap operandId harus ada dan milik sheet ini
+    for (const oid of operandIds) {
+      if (!colMap.has(oid)) {
+        throw new BadRequestException(`operandId "${oid}" tidak ditemukan di sheet ini`);
+      }
+    }
+
+    // 5. Tipe numerik (kecuali COUNT)
+    if (NUMERIC_OPS.has(op)) {
+      const numericTypes = new Set<ColumnType>([ColumnType.INTEGER, ColumnType.FLOAT]);
+      for (const oid of operandIds) {
+        const col = colMap.get(oid)!;
+        if (!numericTypes.has(col.type)) {
+          throw new BadRequestException(
+            `Operand "${col.name}" bertipe ${col.type} — operasi ${op} hanya mendukung kolom INTEGER atau FLOAT`,
+          );
+        }
+      }
+    }
+
+    // 6. Deteksi siklus (hanya relevan saat UPDATE — saat CREATE column belum di graph)
+    if (selfColumnId) {
+      // Bangun graph formula dari kolom yang sudah ada, pakai definisi baru untuk selfColumnId
+      const formulaGraph = new Map<string, string[]>();
+      for (const col of allCols) {
+        if (col.formulaOp !== null && col.id !== selfColumnId) {
+          formulaGraph.set(col.id, col.formulaOperandIds);
+        }
+      }
+      formulaGraph.set(selfColumnId, operandIds);
+
+      // DFS iteratif: cari apakah selfColumnId dapat dijangkau dari operandIds
+      const visited = new Set<string>();
+      const stack = [...operandIds];
+      while (stack.length > 0) {
+        const curr = stack.pop()!;
+        if (curr === selfColumnId) {
+          throw new BadRequestException('Terdeteksi siklus dalam definisi formula (A→…→A)');
+        }
+        if (visited.has(curr)) continue;
+        visited.add(curr);
+        const children = formulaGraph.get(curr);
+        if (children) stack.push(...children);
+      }
+    }
+  }
+
   async createColumn(sheetId: string, dto: CreateColumnDto, userId: string) {
     await this.assertWritableSheet(sheetId);
 
-    // Validasi parentColumnId: harus ada, milik sheet ini, dan merupakan grup (tidak punya type=leaf requirement — semua bisa jadi grup)
     if (dto.parentColumnId) {
       const parent = await this.prisma.column.findUnique({
         where: { id: dto.parentColumnId },
@@ -31,13 +120,19 @@ export class ColumnsService {
       }
     }
 
+    // Validasi formula bila formulaOp diberikan
+    if (dto.formulaOp !== undefined) {
+      await this.validateFormulaDefinition(
+        sheetId,
+        null, // CREATE: ID belum ada, self-reference dan siklus melalui self tidak mungkin
+        dto.formulaOp,
+        dto.formulaOperandIds ?? [],
+      );
+    }
+
     const column = await this.prisma.$transaction(async (tx) => {
-      // orderIndex = max+1 antar sibling (same parent + same sheet)
       const last = await tx.column.findFirst({
-        where: {
-          sheetId,
-          parentColumnId: dto.parentColumnId ?? null,
-        },
+        where: { sheetId, parentColumnId: dto.parentColumnId ?? null },
         orderBy: { orderIndex: 'desc' },
         select: { orderIndex: true },
       });
@@ -53,7 +148,10 @@ export class ColumnsService {
           ...(dto.formulaOp !== undefined && { formulaOp: dto.formulaOp }),
           ...(dto.formulaOperandIds !== undefined && { formulaOperandIds: dto.formulaOperandIds }),
         },
-        select: { id: true, sheetId: true, name: true, type: true, orderIndex: true, parentColumnId: true, formulaOp: true, formulaOperandIds: true },
+        select: {
+          id: true, sheetId: true, name: true, type: true,
+          orderIndex: true, parentColumnId: true, formulaOp: true, formulaOperandIds: true,
+        },
       });
 
       await tx.changeLog.create({
@@ -62,7 +160,12 @@ export class ColumnsService {
           entityType: 'Column',
           entityId: created.id,
           action: ChangeAction.CREATE,
-          afterData: { name: dto.name, type: dto.type, orderIndex, parentColumnId: dto.parentColumnId ?? null },
+          afterData: {
+            name: dto.name, type: dto.type, orderIndex,
+            parentColumnId: dto.parentColumnId ?? null,
+            formulaOp: dto.formulaOp ?? null,
+            formulaOperandIds: dto.formulaOperandIds ?? [],
+          },
         },
       });
 
@@ -75,14 +178,29 @@ export class ColumnsService {
   async updateColumn(columnId: string, dto: UpdateColumnDto, userId: string) {
     const column = await this.prisma.column.findUnique({
       where: { id: columnId },
-      select: { id: true, sheetId: true, name: true, orderIndex: true },
+      select: { id: true, sheetId: true, name: true, orderIndex: true, formulaOp: true },
     });
     if (!column) throw new NotFoundException('Kolom tidak ditemukan');
 
     await this.assertWritableSheet(column.sheetId);
 
-    if (!dto.name && dto.orderIndex === undefined) {
-      throw new BadRequestException('Sertakan minimal satu field: name atau orderIndex');
+    const hasNameOrOrder = dto.name !== undefined || dto.orderIndex !== undefined;
+    const hasFormula = dto.formulaOp !== undefined;
+    if (!hasNameOrOrder && !hasFormula) {
+      throw new BadRequestException('Sertakan minimal satu field yang diubah');
+    }
+
+    // Bila formulaOp diupdate, wajib sertakan formulaOperandIds dan validasi
+    if (hasFormula) {
+      if (!dto.formulaOperandIds || dto.formulaOperandIds.length === 0) {
+        throw new BadRequestException('formulaOperandIds wajib diisi bila formulaOp diberikan');
+      }
+      await this.validateFormulaDefinition(
+        column.sheetId,
+        columnId,
+        dto.formulaOp!,
+        dto.formulaOperandIds,
+      );
     }
 
     const updated = await this.prisma.$transaction(async (tx) => {
@@ -91,8 +209,13 @@ export class ColumnsService {
         data: {
           ...(dto.name !== undefined && { name: dto.name }),
           ...(dto.orderIndex !== undefined && { orderIndex: dto.orderIndex }),
+          ...(dto.formulaOp !== undefined && { formulaOp: dto.formulaOp }),
+          ...(dto.formulaOperandIds !== undefined && { formulaOperandIds: dto.formulaOperandIds }),
         },
-        select: { id: true, sheetId: true, name: true, type: true, orderIndex: true, parentColumnId: true },
+        select: {
+          id: true, sheetId: true, name: true, type: true,
+          orderIndex: true, parentColumnId: true, formulaOp: true, formulaOperandIds: true,
+        },
       });
 
       await tx.changeLog.create({
@@ -101,8 +224,8 @@ export class ColumnsService {
           entityType: 'Column',
           entityId: columnId,
           action: ChangeAction.UPDATE,
-          beforeData: { name: column.name, orderIndex: column.orderIndex },
-          afterData: { name: result.name, orderIndex: result.orderIndex },
+          beforeData: { name: column.name, orderIndex: column.orderIndex, formulaOp: column.formulaOp },
+          afterData: { name: result.name, orderIndex: result.orderIndex, formulaOp: result.formulaOp },
         },
       });
 
@@ -116,12 +239,8 @@ export class ColumnsService {
     const column = await this.prisma.column.findUnique({
       where: { id: columnId },
       select: {
-        id: true,
-        sheetId: true,
-        name: true,
-        type: true,
-        orderIndex: true,
-        parentColumnId: true,
+        id: true, sheetId: true, name: true, type: true,
+        orderIndex: true, parentColumnId: true,
         _count: { select: { childColumns: true } },
       },
     });
@@ -129,8 +248,6 @@ export class ColumnsService {
 
     await this.assertWritableSheet(column.sheetId);
 
-    // Tolak penghapusan kolom grup yang masih punya anak — admin harus hapus anak dulu.
-    // Pilihan ini lebih aman dari cascade: mencegah penghapusan tidak sengaja pada header bertingkat.
     if (column._count.childColumns > 0) {
       throw new BadRequestException(
         `Kolom "${column.name}" masih punya ${column._count.childColumns} kolom anak. Hapus anak terlebih dahulu.`,
@@ -145,16 +262,12 @@ export class ColumnsService {
           entityId: columnId,
           action: ChangeAction.DELETE,
           beforeData: {
-            name: column.name,
-            type: column.type,
-            orderIndex: column.orderIndex,
-            parentColumnId: column.parentColumnId,
-            sheetId: column.sheetId,
+            name: column.name, type: column.type, orderIndex: column.orderIndex,
+            parentColumnId: column.parentColumnId, sheetId: column.sheetId,
           },
         },
       });
 
-      // Cell.columnId punya onDelete: Cascade di schema → cukup delete Column; cell ikut terhapus.
       await tx.column.delete({ where: { id: columnId } });
     });
 
