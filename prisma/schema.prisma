@@ -38,6 +38,18 @@ enum ChangeAction {
   DELETE
 }
 
+enum FormulaOp {
+  ADD
+  SUB
+  MUL
+  DIV
+  SUM
+  AVERAGE
+  COUNT
+  MAX
+  MIN
+}
+
 // ============================ MODELS ============================
 
 model User {
@@ -128,11 +140,11 @@ model Column {
   id                String     @id @default(uuid()) @db.Uuid
   sheetId           String     @db.Uuid
   parentColumnId    String?    @db.Uuid
-  name              String
-  type              ColumnType @default(TEXT)
-  isFormula         Boolean    @default(false)
-  formulaDefinition Json?
-  orderIndex        Int        @default(0)
+  name               String
+  type               ColumnType @default(TEXT)
+  formulaOp          FormulaOp?
+  formulaOperandIds  String[]   @default([])
+  orderIndex         Int        @default(0)
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
 

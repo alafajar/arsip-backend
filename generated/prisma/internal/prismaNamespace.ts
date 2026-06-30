@@ -1263,8 +1263,8 @@ export const ColumnScalarFieldEnum = {
   parentColumnId: 'parentColumnId',
   name: 'name',
   type: 'type',
-  isFormula: 'isFormula',
-  formulaDefinition: 'formulaDefinition',
+  formulaOp: 'formulaOp',
+  formulaOperandIds: 'formulaOperandIds',
   orderIndex: 'orderIndex',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1461,16 +1461,16 @@ export type ListEnumColumnTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$P
 
 
 /**
- * Reference to a field of type 'Json'
+ * Reference to a field of type 'FormulaOp'
  */
-export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+export type EnumFormulaOpFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FormulaOp'>
     
 
 
 /**
- * Reference to a field of type 'QueryMode'
+ * Reference to a field of type 'FormulaOp[]'
  */
-export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+export type ListEnumFormulaOpFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FormulaOp[]'>
     
 
 
@@ -1485,6 +1485,20 @@ export type EnumChangeActionFieldRefInput<$PrismaModel> = FieldRefInputType<$Pri
  * Reference to a field of type 'ChangeAction[]'
  */
 export type ListEnumChangeActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChangeAction[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 

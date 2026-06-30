@@ -9,6 +9,11 @@ import { ThrottlerExceptionFilter } from './auth/filters/throttler-exception.fil
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Express 5 mengubah default query parser dari 'extended' (qs) ke 'simple' (URLSearchParams).
+  // Filter faceted memakai bracket notation qs: filter[uuid][]=v1 — harus dikembalikan ke extended.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (app.getHttpAdapter().getInstance() as any).set('query parser', 'extended');
+
   app.use(cookieParser());
   app.useGlobalPipes(
     new ValidationPipe({

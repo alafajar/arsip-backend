@@ -1,9 +1,84 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { ChangeAction, ColumnType } from '../../generated/prisma/client';
+import { FormulaOp } from '../../generated/prisma/enums';
 import { PrismaService } from '../prisma/prisma.service';
 import { validateValueForType } from '../columns/column-value.validator';
 import { CreateRowDto } from './dto/create-row.dto';
+import { CreateSheetDto } from './dto/create-sheet.dto';
 import { UpdateRowDto } from './dto/update-row.dto';
+
+interface FacetFilter { columnId: string; values: string[] }
+
+function normalizeFacets(raw?: Record<string, unknown>): FacetFilter[] {
+  if (!raw) return [];
+  return Object.entries(raw)
+    .map(([columnId, val]) => {
+      const values = Array.isArray(val)
+        ? (val as string[]).filter((v) => typeof v === 'string' && v.length > 0)
+        : typeof val === 'string' && val.length > 0
+        ? [val]
+        : [];
+      return { columnId, values };
+    })
+    .filter((f) => f.values.length > 0);
+}
+
+function toNum(v: string | null | undefined): number | null {
+  if (v === null || v === undefined || v.trim() === '') return null;
+  const n = Number(v);
+  return isNaN(n) || !isFinite(n) ? null : n;
+}
+
+function fmt(n: number): string {
+  // Hilangkan floating-point noise (mis. 0.30000000000000004 → "0.3")
+  return parseFloat(n.toPrecision(10)).toString();
+}
+
+function computeFormula(op: FormulaOp, rawValues: (string | null)[]): string {
+  switch (op) {
+    case FormulaOp.ADD:
+    case FormulaOp.SUM: {
+      const nums = rawValues.map(toNum).filter((n): n is number => n !== null);
+      return nums.length === 0 ? '' : fmt(nums.reduce((a, b) => a + b, 0));
+    }
+    case FormulaOp.SUB: {
+      const nums = rawValues.map(toNum);
+      if (nums.some((n) => n === null) || nums.length === 0) return '';
+      return fmt((nums as number[]).slice(1).reduce((a, b) => a - b, (nums as number[])[0]));
+    }
+    case FormulaOp.MUL: {
+      const nums = rawValues.map(toNum).filter((n): n is number => n !== null);
+      return nums.length === 0 ? '' : fmt(nums.reduce((a, b) => a * b, 1));
+    }
+    case FormulaOp.DIV: {
+      const nums = rawValues.map(toNum);
+      if (nums.some((n) => n === null) || nums.length === 0) return '';
+      const vs = nums as number[];
+      for (let i = 1; i < vs.length; i++) {
+        if (vs[i] === 0) return '';
+      }
+      return fmt(vs.slice(1).reduce((a, b) => a / b, vs[0]));
+    }
+    case FormulaOp.AVERAGE: {
+      const nums = rawValues.map(toNum).filter((n): n is number => n !== null);
+      return nums.length === 0 ? '' : fmt(nums.reduce((a, b) => a + b, 0) / nums.length);
+    }
+    case FormulaOp.COUNT: {
+      const count = rawValues.map(toNum).filter((n): n is number => n !== null).length;
+      return String(count);
+    }
+    case FormulaOp.MAX: {
+      const nums = rawValues.map(toNum).filter((n): n is number => n !== null);
+      return nums.length === 0 ? '' : fmt(Math.max(...nums));
+    }
+    case FormulaOp.MIN: {
+      const nums = rawValues.map(toNum).filter((n): n is number => n !== null);
+      return nums.length === 0 ? '' : fmt(Math.min(...nums));
+    }
+    default:
+      return '';
+  }
+}
 
 export interface ColumnNode {
   id: string;
@@ -49,7 +124,12 @@ export class SheetsService {
     return roots;
   }
 
-  async getRows(sheetId: string, limit: number, offset: number) {
+  async getRows(
+    sheetId: string,
+    limit: number,
+    offset: number,
+    rawFilter?: Record<string, unknown>,
+  ) {
     const safeLimit = Math.min(Math.max(1, limit), 200);
     const safeOffset = Math.max(0, offset);
 
@@ -59,17 +139,45 @@ export class SheetsService {
     });
     if (!sheet) throw new NotFoundException('Sheet tidak ditemukan');
 
-    // Ambil semua columnId sheet sekali — dipakai untuk mengisi null pada kolom yang tidak punya Cell
+    // Ambil semua kolom sheet — id + formula fields (untuk null-fill, filter, dan komputasi)
     const columns = await this.prisma.column.findMany({
       where: { sheetId },
-      select: { id: true },
+      select: { id: true, formulaOp: true, formulaOperandIds: true },
     });
     const allColumnIds = columns.map((c) => c.id);
+    const columnIdSet = new Set(allColumnIds);
+
+    // Peta kolom formula: columnId → { op, operandIds }
+    type FormulaEntry = { op: FormulaOp; operandIds: string[] };
+    const formulaMap = new Map<string, FormulaEntry>(
+      columns
+        .filter((c): c is typeof c & { formulaOp: FormulaOp } => c.formulaOp !== null)
+        .map((c) => [c.id, { op: c.formulaOp, operandIds: c.formulaOperandIds }]),
+    );
+
+    // Validasi dan normalisasi filter
+    const facets = normalizeFacets(rawFilter);
+    for (const f of facets) {
+      if (!columnIdSet.has(f.columnId)) {
+        throw new BadRequestException(
+          `columnId filter "${f.columnId}" tidak ditemukan di sheet ini.`,
+        );
+      }
+    }
+
+    // Bangun where: AND[cells.some(columnId + value.in)] → dieksekusi di DB
+    const andConditions = facets.map((f) => ({
+      cells: { some: { columnId: f.columnId, value: { in: f.values } } },
+    }));
+    const rowWhere = {
+      sheetId,
+      ...(andConditions.length > 0 && { AND: andConditions }),
+    };
 
     const [total, dbRows] = await Promise.all([
-      this.prisma.row.count({ where: { sheetId } }),
+      this.prisma.row.count({ where: rowWhere }),
       this.prisma.row.findMany({
-        where: { sheetId },
+        where: rowWhere,
         select: {
           id: true,
           orderIndex: true,
@@ -89,6 +197,11 @@ export class SheetsService {
       }
       for (const cell of row.cells) {
         cells[cell.columnId] = cell.value ?? null;
+      }
+      // Hitung nilai kolom formula (horizontal, per baris) — tidak disimpan, dihitung saat read
+      for (const [colId, { op, operandIds }] of formulaMap) {
+        const operandValues = operandIds.map((oid) => cells[oid] ?? null);
+        cells[colId] = computeFormula(op, operandValues);
       }
       return { rowId: row.id, orderIndex: row.orderIndex, cells };
     });
@@ -112,13 +225,13 @@ export class SheetsService {
     // 2. Ambil semua kolom sheet: leaf map (untuk validasi) + all IDs (untuk null-fill respons)
     const allColumns = await this.prisma.column.findMany({
       where: { sheetId },
-      select: { id: true, name: true, type: true, _count: { select: { childColumns: true } } },
+      select: { id: true, name: true, type: true, formulaOp: true, _count: { select: { childColumns: true } } },
     });
     const allColumnIds = allColumns.map((c) => c.id);
     const leafMap = new Map(
       allColumns
         .filter((c) => c._count.childColumns === 0)
-        .map((c) => [c.id, { name: c.name, type: c.type }]),
+        .map((c) => [c.id, { name: c.name, type: c.type, isFormula: c.formulaOp !== null }]),
     );
 
     // 3. Validasi berlapis — fail-fast sebelum menyentuh DB tulis
@@ -128,6 +241,11 @@ export class SheetsService {
       if (!col) {
         throw new BadRequestException(
           `columnId "${cell.columnId}" tidak ditemukan di sheet ini atau merupakan node grup.`,
+        );
+      }
+      if (col.isFormula) {
+        throw new BadRequestException(
+          `columnId "${cell.columnId}" adalah kolom formula dan tidak bisa ditulis secara langsung.`,
         );
       }
       if (seenIds.has(cell.columnId)) {
@@ -200,13 +318,13 @@ export class SheetsService {
     // 3. Ambil semua kolom sheet: leaf map (validasi) + all IDs (null-fill respons)
     const allColumns = await this.prisma.column.findMany({
       where: { sheetId },
-      select: { id: true, name: true, type: true, _count: { select: { childColumns: true } } },
+      select: { id: true, name: true, type: true, formulaOp: true, _count: { select: { childColumns: true } } },
     });
     const allColumnIds = allColumns.map((c) => c.id);
     const leafMap = new Map(
       allColumns
         .filter((c) => c._count.childColumns === 0)
-        .map((c) => [c.id, { name: c.name, type: c.type }]),
+        .map((c) => [c.id, { name: c.name, type: c.type, isFormula: c.formulaOp !== null }]),
     );
 
     // 4. Validasi berlapis — fail-fast
@@ -216,6 +334,11 @@ export class SheetsService {
       if (!col) {
         throw new BadRequestException(
           `columnId "${cell.columnId}" tidak ditemukan di sheet ini atau merupakan node grup.`,
+        );
+      }
+      if (col.isFormula) {
+        throw new BadRequestException(
+          `columnId "${cell.columnId}" adalah kolom formula dan tidak bisa ditulis secara langsung.`,
         );
       }
       if (seenIds.has(cell.columnId)) {
@@ -321,6 +444,84 @@ export class SheetsService {
     });
 
     return { deleted: true, rowId };
+  }
+
+  async getColumnValues(sheetId: string, columnId: string) {
+    const sheet = await this.prisma.sheet.findUnique({
+      where: { id: sheetId },
+      select: { id: true },
+    });
+    if (!sheet) throw new NotFoundException('Sheet tidak ditemukan');
+
+    const column = await this.prisma.column.findUnique({
+      where: { id: columnId },
+      select: { sheetId: true, _count: { select: { childColumns: true } } },
+    });
+    if (!column || column.sheetId !== sheetId) {
+      throw new NotFoundException('Kolom tidak ditemukan di sheet ini');
+    }
+    if (column._count.childColumns > 0) {
+      throw new BadRequestException('Kolom grup tidak memiliki nilai; gunakan kolom daun (leaf).');
+    }
+
+    const LIMIT = 200;
+    // groupBy menghasilkan GROUP BY di SQL — distinct dijamin di DB, bukan di memori.
+    const groups = await this.prisma.cell.groupBy({
+      by: ['value'],
+      where: {
+        columnId,
+        value: { not: null },
+      },
+      orderBy: { value: 'asc' },
+      take: LIMIT,
+    });
+
+    const values = (groups as { value: string | null }[])
+      .map((g) => g.value as string)
+      .filter((v) => v !== null && v.trim() !== '');
+
+    return { values, total: values.length };
+  }
+
+  async createSheet(dto: CreateSheetDto, userId: string) {
+    const menu = await this.prisma.menuItem.findUnique({
+      where: { id: dto.menuItemId },
+      select: { id: true },
+    });
+    if (!menu) throw new NotFoundException('Menu item tidak ditemukan');
+
+    const sheet = await this.prisma.$transaction(async (tx) => {
+      const last = await tx.sheet.findFirst({
+        where: { menuItemId: dto.menuItemId },
+        orderBy: { orderIndex: 'desc' },
+        select: { orderIndex: true },
+      });
+      const orderIndex = (last?.orderIndex ?? 0) + 1;
+
+      const created = await tx.sheet.create({
+        data: {
+          name: dto.name,
+          menuItemId: dto.menuItemId,
+          orderIndex,
+          isReadOnly: false,
+        },
+        select: { id: true, name: true, menuItemId: true, isReadOnly: true, orderIndex: true },
+      });
+
+      await tx.changeLog.create({
+        data: {
+          userId,
+          entityType: 'Sheet',
+          entityId: created.id,
+          action: ChangeAction.CREATE,
+          afterData: { name: dto.name, menuItemId: dto.menuItemId, orderIndex },
+        },
+      });
+
+      return created;
+    });
+
+    return sheet;
   }
 
   async findById(id: string) {

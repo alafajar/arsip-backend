@@ -25,6 +25,7 @@ import {
 import { Roles, Role } from '../auth/decorators/roles.decorator';
 import { SheetsService } from './sheets.service';
 import { CreateRowDto } from './dto/create-row.dto';
+import { CreateSheetDto } from './dto/create-sheet.dto';
 import { UpdateRowDto } from './dto/update-row.dto';
 
 @ApiTags('Sheets')
@@ -32,6 +33,21 @@ import { UpdateRowDto } from './dto/update-row.dto';
 @Controller('sheets')
 export class SheetsController {
   constructor(private readonly sheetsService: SheetsService) {}
+
+  @Post()
+  @Roles(Role.ADMIN)
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Buat sheet kosong baru (ADMIN)', description: 'Sheet dibuat tanpa kolom dan baris; tambah kolom via endpoint column CRUD.' })
+  @ApiResponse({ status: 201, schema: { example: { id: 'uuid', name: 'Data Dosen 2025', menuItemId: 'uuid', isReadOnly: false, orderIndex: 1 } } })
+  @ApiResponse({ status: 400, description: 'Validasi gagal.' })
+  @ApiResponse({ status: 403, description: 'Hanya ADMIN.' })
+  @ApiResponse({ status: 404, description: 'Menu item tidak ditemukan.' })
+  createSheet(
+    @Body() dto: CreateSheetDto,
+    @Request() req: { user: { id: string } },
+  ) {
+    return this.sheetsService.createSheet(dto, req.user.id);
+  }
 
   @Get(':id')
   @ApiOperation({ summary: 'Metadata sheet (nama, menu, dll.)' })
@@ -80,6 +96,13 @@ export class SheetsController {
   @ApiParam({ name: 'id', description: 'UUID sheet' })
   @ApiQuery({ name: 'limit', required: false, example: 50, description: 'Maks baris per halaman (1–200, default 50)' })
   @ApiQuery({ name: 'offset', required: false, example: 0, description: 'Baris dilewati (default 0)' })
+  @ApiQuery({
+    name: 'filter',
+    required: false,
+    description:
+      'Filter faceted. Format bracket-array qs: `filter[<columnId>][]=v1&filter[<columnId>][]=v2`. ' +
+      'OR dalam satu kolom, AND antar-kolom. Exact match (K2).',
+  })
   @ApiResponse({
     status: 200,
     schema: {
@@ -109,8 +132,31 @@ export class SheetsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number,
     @Query('offset', new DefaultValuePipe(0), ParseIntPipe) offset: number,
+    @Query('filter') rawFilter?: Record<string, unknown>,
   ) {
-    return this.sheetsService.getRows(id, limit, offset);
+    return this.sheetsService.getRows(id, limit, offset, rawFilter);
+  }
+
+  @Get(':id/columns/:columnId/values')
+  @ApiOperation({
+    summary: 'Nilai unik pada kolom (untuk filter multi-select)',
+    description:
+      'Mengembalikan nilai distinct non-kosong pada kolom daun, terurut naik, maks 200 nilai. ' +
+      'Kolom grup (punya anak) akan ditolak dengan 400.',
+  })
+  @ApiParam({ name: 'id', description: 'UUID sheet' })
+  @ApiParam({ name: 'columnId', description: 'UUID kolom daun' })
+  @ApiResponse({
+    status: 200,
+    schema: { example: { values: ['Lektor', 'Lektor Kepala', 'Profesor'], total: 3 } },
+  })
+  @ApiResponse({ status: 400, description: 'Kolom adalah grup, bukan daun.' })
+  @ApiResponse({ status: 404, description: 'Sheet atau kolom tidak ditemukan.' })
+  getColumnValues(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('columnId', ParseUUIDPipe) columnId: string,
+  ) {
+    return this.sheetsService.getColumnValues(id, columnId);
   }
 
   @Post(':id/rows')

@@ -174,6 +174,26 @@ export class MenusService {
     return { deleted: true, id };
   }
 
+  async getPath(id: string): Promise<{ id: string; name: string }[]> {
+    const all = await this.prisma.menuItem.findMany({
+      select: { id: true, name: true, parentId: true },
+    });
+
+    type Flat = { id: string; name: string; parentId: string | null };
+    const map = new Map<string, Flat>(all.map((n) => [n.id, n as Flat]));
+    if (!map.has(id)) throw new NotFoundException('Node tidak ditemukan');
+
+    const path: { id: string; name: string }[] = [];
+    let current: string | null = id;
+    while (current !== null) {
+      const node = map.get(current) as Flat;
+      path.push({ id: node.id, name: node.name });
+      current = node.parentId;
+    }
+    path.reverse();
+    return path;
+  }
+
   // Telusuri ke atas dari `candidateParentId`; kembalikan true jika menyentuh `nodeId`
   private async wouldCauseCycle(nodeId: string, candidateParentId: string): Promise<boolean> {
     let current: string | null = candidateParentId;
