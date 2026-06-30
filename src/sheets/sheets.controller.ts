@@ -113,6 +113,28 @@ export class SheetsController {
     return this.sheetsService.getRows(id, limit, offset);
   }
 
+  @Get(':id/columns/:columnId/values')
+  @ApiOperation({
+    summary: 'Nilai unik pada kolom (untuk filter multi-select)',
+    description:
+      'Mengembalikan nilai distinct non-kosong pada kolom daun, terurut naik, maks 200 nilai. ' +
+      'Kolom grup (punya anak) akan ditolak dengan 400.',
+  })
+  @ApiParam({ name: 'id', description: 'UUID sheet' })
+  @ApiParam({ name: 'columnId', description: 'UUID kolom daun' })
+  @ApiResponse({
+    status: 200,
+    schema: { example: { values: ['Lektor', 'Lektor Kepala', 'Profesor'], total: 3 } },
+  })
+  @ApiResponse({ status: 400, description: 'Kolom adalah grup, bukan daun.' })
+  @ApiResponse({ status: 404, description: 'Sheet atau kolom tidak ditemukan.' })
+  getColumnValues(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('columnId', ParseUUIDPipe) columnId: string,
+  ) {
+    return this.sheetsService.getColumnValues(id, columnId);
+  }
+
   @Post(':id/rows')
   @Roles(Role.ADMIN)
   @HttpCode(HttpStatus.CREATED)

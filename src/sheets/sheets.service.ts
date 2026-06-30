@@ -323,6 +323,43 @@ export class SheetsService {
     return { deleted: true, rowId };
   }
 
+  async getColumnValues(sheetId: string, columnId: string) {
+    const sheet = await this.prisma.sheet.findUnique({
+      where: { id: sheetId },
+      select: { id: true },
+    });
+    if (!sheet) throw new NotFoundException('Sheet tidak ditemukan');
+
+    const column = await this.prisma.column.findUnique({
+      where: { id: columnId },
+      select: { sheetId: true, _count: { select: { childColumns: true } } },
+    });
+    if (!column || column.sheetId !== sheetId) {
+      throw new NotFoundException('Kolom tidak ditemukan di sheet ini');
+    }
+    if (column._count.childColumns > 0) {
+      throw new BadRequestException('Kolom grup tidak memiliki nilai; gunakan kolom daun (leaf).');
+    }
+
+    const LIMIT = 200;
+    // groupBy menghasilkan GROUP BY di SQL — distinct dijamin di DB, bukan di memori.
+    const groups = await this.prisma.cell.groupBy({
+      by: ['value'],
+      where: {
+        columnId,
+        value: { not: null },
+      },
+      orderBy: { value: 'asc' },
+      take: LIMIT,
+    });
+
+    const values = (groups as { value: string | null }[])
+      .map((g) => g.value as string)
+      .filter((v) => v !== null && v.trim() !== '');
+
+    return { values, total: values.length };
+  }
+
   async findById(id: string) {
     const sheet = await this.prisma.sheet.findUnique({
       where: { id },
