@@ -80,6 +80,13 @@ export class SheetsController {
   @ApiParam({ name: 'id', description: 'UUID sheet' })
   @ApiQuery({ name: 'limit', required: false, example: 50, description: 'Maks baris per halaman (1–200, default 50)' })
   @ApiQuery({ name: 'offset', required: false, example: 0, description: 'Baris dilewati (default 0)' })
+  @ApiQuery({
+    name: 'filter',
+    required: false,
+    description:
+      'Filter faceted. Format bracket-array qs: `filter[<columnId>][]=v1&filter[<columnId>][]=v2`. ' +
+      'OR dalam satu kolom, AND antar-kolom. Exact match (K2).',
+  })
   @ApiResponse({
     status: 200,
     schema: {
@@ -109,8 +116,9 @@ export class SheetsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number,
     @Query('offset', new DefaultValuePipe(0), ParseIntPipe) offset: number,
+    @Query('filter') rawFilter?: Record<string, unknown>,
   ) {
-    return this.sheetsService.getRows(id, limit, offset);
+    return this.sheetsService.getRows(id, limit, offset, rawFilter);
   }
 
   @Get(':id/columns/:columnId/values')

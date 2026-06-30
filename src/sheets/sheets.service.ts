@@ -5,6 +5,22 @@ import { validateValueForType } from '../columns/column-value.validator';
 import { CreateRowDto } from './dto/create-row.dto';
 import { UpdateRowDto } from './dto/update-row.dto';
 
+interface FacetFilter { columnId: string; values: string[] }
+
+function normalizeFacets(raw?: Record<string, unknown>): FacetFilter[] {
+  if (!raw) return [];
+  return Object.entries(raw)
+    .map(([columnId, val]) => {
+      const values = Array.isArray(val)
+        ? (val as string[]).filter((v) => typeof v === 'string' && v.length > 0)
+        : typeof val === 'string' && val.length > 0
+        ? [val]
+        : [];
+      return { columnId, values };
+    })
+    .filter((f) => f.values.length > 0);
+}
+
 export interface ColumnNode {
   id: string;
   name: string;
@@ -49,7 +65,12 @@ export class SheetsService {
     return roots;
   }
 
-  async getRows(sheetId: string, limit: number, offset: number) {
+  async getRows(
+    sheetId: string,
+    limit: number,
+    offset: number,
+    rawFilter?: Record<string, unknown>,
+  ) {
     const safeLimit = Math.min(Math.max(1, limit), 200);
     const safeOffset = Math.max(0, offset);
 
@@ -59,17 +80,37 @@ export class SheetsService {
     });
     if (!sheet) throw new NotFoundException('Sheet tidak ditemukan');
 
-    // Ambil semua columnId sheet sekali — dipakai untuk mengisi null pada kolom yang tidak punya Cell
+    // Ambil semua columnId sheet — untuk null-fill respons dan validasi filter
     const columns = await this.prisma.column.findMany({
       where: { sheetId },
       select: { id: true },
     });
     const allColumnIds = columns.map((c) => c.id);
+    const columnIdSet = new Set(allColumnIds);
+
+    // Validasi dan normalisasi filter
+    const facets = normalizeFacets(rawFilter);
+    for (const f of facets) {
+      if (!columnIdSet.has(f.columnId)) {
+        throw new BadRequestException(
+          `columnId filter "${f.columnId}" tidak ditemukan di sheet ini.`,
+        );
+      }
+    }
+
+    // Bangun where: AND[cells.some(columnId + value.in)] → dieksekusi di DB
+    const andConditions = facets.map((f) => ({
+      cells: { some: { columnId: f.columnId, value: { in: f.values } } },
+    }));
+    const rowWhere = {
+      sheetId,
+      ...(andConditions.length > 0 && { AND: andConditions }),
+    };
 
     const [total, dbRows] = await Promise.all([
-      this.prisma.row.count({ where: { sheetId } }),
+      this.prisma.row.count({ where: rowWhere }),
       this.prisma.row.findMany({
-        where: { sheetId },
+        where: rowWhere,
         select: {
           id: true,
           orderIndex: true,
