@@ -40,7 +40,7 @@ export type ColumnMinAggregateOutputType = {
   parentColumnId: string | null
   name: string | null
   type: $Enums.ColumnType | null
-  isFormula: boolean | null
+  formulaOp: $Enums.FormulaOp | null
   orderIndex: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -52,7 +52,7 @@ export type ColumnMaxAggregateOutputType = {
   parentColumnId: string | null
   name: string | null
   type: $Enums.ColumnType | null
-  isFormula: boolean | null
+  formulaOp: $Enums.FormulaOp | null
   orderIndex: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -64,8 +64,8 @@ export type ColumnCountAggregateOutputType = {
   parentColumnId: number
   name: number
   type: number
-  isFormula: number
-  formulaDefinition: number
+  formulaOp: number
+  formulaOperandIds: number
   orderIndex: number
   createdAt: number
   updatedAt: number
@@ -87,7 +87,7 @@ export type ColumnMinAggregateInputType = {
   parentColumnId?: true
   name?: true
   type?: true
-  isFormula?: true
+  formulaOp?: true
   orderIndex?: true
   createdAt?: true
   updatedAt?: true
@@ -99,7 +99,7 @@ export type ColumnMaxAggregateInputType = {
   parentColumnId?: true
   name?: true
   type?: true
-  isFormula?: true
+  formulaOp?: true
   orderIndex?: true
   createdAt?: true
   updatedAt?: true
@@ -111,8 +111,8 @@ export type ColumnCountAggregateInputType = {
   parentColumnId?: true
   name?: true
   type?: true
-  isFormula?: true
-  formulaDefinition?: true
+  formulaOp?: true
+  formulaOperandIds?: true
   orderIndex?: true
   createdAt?: true
   updatedAt?: true
@@ -211,8 +211,8 @@ export type ColumnGroupByOutputType = {
   parentColumnId: string | null
   name: string
   type: $Enums.ColumnType
-  isFormula: boolean
-  formulaDefinition: runtime.JsonValue | null
+  formulaOp: $Enums.FormulaOp | null
+  formulaOperandIds: string[]
   orderIndex: number
   createdAt: Date
   updatedAt: Date
@@ -247,8 +247,8 @@ export type ColumnWhereInput = {
   parentColumnId?: Prisma.UuidNullableFilter<"Column"> | string | null
   name?: Prisma.StringFilter<"Column"> | string
   type?: Prisma.EnumColumnTypeFilter<"Column"> | $Enums.ColumnType
-  isFormula?: Prisma.BoolFilter<"Column"> | boolean
-  formulaDefinition?: Prisma.JsonNullableFilter<"Column">
+  formulaOp?: Prisma.EnumFormulaOpNullableFilter<"Column"> | $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.StringNullableListFilter<"Column">
   orderIndex?: Prisma.IntFilter<"Column"> | number
   createdAt?: Prisma.DateTimeFilter<"Column"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Column"> | Date | string
@@ -264,8 +264,8 @@ export type ColumnOrderByWithRelationInput = {
   parentColumnId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
-  isFormula?: Prisma.SortOrder
-  formulaDefinition?: Prisma.SortOrderInput | Prisma.SortOrder
+  formulaOp?: Prisma.SortOrderInput | Prisma.SortOrder
+  formulaOperandIds?: Prisma.SortOrder
   orderIndex?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -284,8 +284,8 @@ export type ColumnWhereUniqueInput = Prisma.AtLeast<{
   parentColumnId?: Prisma.UuidNullableFilter<"Column"> | string | null
   name?: Prisma.StringFilter<"Column"> | string
   type?: Prisma.EnumColumnTypeFilter<"Column"> | $Enums.ColumnType
-  isFormula?: Prisma.BoolFilter<"Column"> | boolean
-  formulaDefinition?: Prisma.JsonNullableFilter<"Column">
+  formulaOp?: Prisma.EnumFormulaOpNullableFilter<"Column"> | $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.StringNullableListFilter<"Column">
   orderIndex?: Prisma.IntFilter<"Column"> | number
   createdAt?: Prisma.DateTimeFilter<"Column"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Column"> | Date | string
@@ -301,8 +301,8 @@ export type ColumnOrderByWithAggregationInput = {
   parentColumnId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
-  isFormula?: Prisma.SortOrder
-  formulaDefinition?: Prisma.SortOrderInput | Prisma.SortOrder
+  formulaOp?: Prisma.SortOrderInput | Prisma.SortOrder
+  formulaOperandIds?: Prisma.SortOrder
   orderIndex?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -322,8 +322,8 @@ export type ColumnScalarWhereWithAggregatesInput = {
   parentColumnId?: Prisma.UuidNullableWithAggregatesFilter<"Column"> | string | null
   name?: Prisma.StringWithAggregatesFilter<"Column"> | string
   type?: Prisma.EnumColumnTypeWithAggregatesFilter<"Column"> | $Enums.ColumnType
-  isFormula?: Prisma.BoolWithAggregatesFilter<"Column"> | boolean
-  formulaDefinition?: Prisma.JsonNullableWithAggregatesFilter<"Column">
+  formulaOp?: Prisma.EnumFormulaOpNullableWithAggregatesFilter<"Column"> | $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.StringNullableListFilter<"Column">
   orderIndex?: Prisma.IntWithAggregatesFilter<"Column"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Column"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Column"> | Date | string
@@ -333,8 +333,8 @@ export type ColumnCreateInput = {
   id?: string
   name: string
   type?: $Enums.ColumnType
-  isFormula?: boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnCreateformulaOperandIdsInput | string[]
   orderIndex?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -350,8 +350,8 @@ export type ColumnUncheckedCreateInput = {
   parentColumnId?: string | null
   name: string
   type?: $Enums.ColumnType
-  isFormula?: boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnCreateformulaOperandIdsInput | string[]
   orderIndex?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -363,8 +363,8 @@ export type ColumnUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumColumnTypeFieldUpdateOperationsInput | $Enums.ColumnType
-  isFormula?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: Prisma.NullableEnumFormulaOpFieldUpdateOperationsInput | $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnUpdateformulaOperandIdsInput | string[]
   orderIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -380,8 +380,8 @@ export type ColumnUncheckedUpdateInput = {
   parentColumnId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumColumnTypeFieldUpdateOperationsInput | $Enums.ColumnType
-  isFormula?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: Prisma.NullableEnumFormulaOpFieldUpdateOperationsInput | $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnUpdateformulaOperandIdsInput | string[]
   orderIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -395,8 +395,8 @@ export type ColumnCreateManyInput = {
   parentColumnId?: string | null
   name: string
   type?: $Enums.ColumnType
-  isFormula?: boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnCreateformulaOperandIdsInput | string[]
   orderIndex?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -406,8 +406,8 @@ export type ColumnUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumColumnTypeFieldUpdateOperationsInput | $Enums.ColumnType
-  isFormula?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: Prisma.NullableEnumFormulaOpFieldUpdateOperationsInput | $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnUpdateformulaOperandIdsInput | string[]
   orderIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -419,8 +419,8 @@ export type ColumnUncheckedUpdateManyInput = {
   parentColumnId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumColumnTypeFieldUpdateOperationsInput | $Enums.ColumnType
-  isFormula?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: Prisma.NullableEnumFormulaOpFieldUpdateOperationsInput | $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnUpdateformulaOperandIdsInput | string[]
   orderIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -436,6 +436,14 @@ export type ColumnOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type StringNullableListFilter<$PrismaModel = never> = {
+  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
+  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
+  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
+}
+
 export type ColumnNullableScalarRelationFilter = {
   is?: Prisma.ColumnWhereInput | null
   isNot?: Prisma.ColumnWhereInput | null
@@ -447,8 +455,8 @@ export type ColumnCountOrderByAggregateInput = {
   parentColumnId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
-  isFormula?: Prisma.SortOrder
-  formulaDefinition?: Prisma.SortOrder
+  formulaOp?: Prisma.SortOrder
+  formulaOperandIds?: Prisma.SortOrder
   orderIndex?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -464,7 +472,7 @@ export type ColumnMaxOrderByAggregateInput = {
   parentColumnId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
-  isFormula?: Prisma.SortOrder
+  formulaOp?: Prisma.SortOrder
   orderIndex?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -476,7 +484,7 @@ export type ColumnMinOrderByAggregateInput = {
   parentColumnId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
-  isFormula?: Prisma.SortOrder
+  formulaOp?: Prisma.SortOrder
   orderIndex?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -533,6 +541,10 @@ export type ColumnUncheckedUpdateManyWithoutSheetNestedInput = {
   deleteMany?: Prisma.ColumnScalarWhereInput | Prisma.ColumnScalarWhereInput[]
 }
 
+export type ColumnCreateformulaOperandIdsInput = {
+  set: string[]
+}
+
 export type ColumnCreateNestedOneWithoutChildColumnsInput = {
   create?: Prisma.XOR<Prisma.ColumnCreateWithoutChildColumnsInput, Prisma.ColumnUncheckedCreateWithoutChildColumnsInput>
   connectOrCreate?: Prisma.ColumnCreateOrConnectWithoutChildColumnsInput
@@ -555,6 +567,15 @@ export type ColumnUncheckedCreateNestedManyWithoutParentColumnInput = {
 
 export type EnumColumnTypeFieldUpdateOperationsInput = {
   set?: $Enums.ColumnType
+}
+
+export type NullableEnumFormulaOpFieldUpdateOperationsInput = {
+  set?: $Enums.FormulaOp | null
+}
+
+export type ColumnUpdateformulaOperandIdsInput = {
+  set?: string[]
+  push?: string | string[]
 }
 
 export type ColumnUpdateOneWithoutChildColumnsNestedInput = {
@@ -613,8 +634,8 @@ export type ColumnCreateWithoutSheetInput = {
   id?: string
   name: string
   type?: $Enums.ColumnType
-  isFormula?: boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnCreateformulaOperandIdsInput | string[]
   orderIndex?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -628,8 +649,8 @@ export type ColumnUncheckedCreateWithoutSheetInput = {
   parentColumnId?: string | null
   name: string
   type?: $Enums.ColumnType
-  isFormula?: boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnCreateformulaOperandIdsInput | string[]
   orderIndex?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -672,8 +693,8 @@ export type ColumnScalarWhereInput = {
   parentColumnId?: Prisma.UuidNullableFilter<"Column"> | string | null
   name?: Prisma.StringFilter<"Column"> | string
   type?: Prisma.EnumColumnTypeFilter<"Column"> | $Enums.ColumnType
-  isFormula?: Prisma.BoolFilter<"Column"> | boolean
-  formulaDefinition?: Prisma.JsonNullableFilter<"Column">
+  formulaOp?: Prisma.EnumFormulaOpNullableFilter<"Column"> | $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.StringNullableListFilter<"Column">
   orderIndex?: Prisma.IntFilter<"Column"> | number
   createdAt?: Prisma.DateTimeFilter<"Column"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Column"> | Date | string
@@ -683,8 +704,8 @@ export type ColumnCreateWithoutChildColumnsInput = {
   id?: string
   name: string
   type?: $Enums.ColumnType
-  isFormula?: boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnCreateformulaOperandIdsInput | string[]
   orderIndex?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -699,8 +720,8 @@ export type ColumnUncheckedCreateWithoutChildColumnsInput = {
   parentColumnId?: string | null
   name: string
   type?: $Enums.ColumnType
-  isFormula?: boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnCreateformulaOperandIdsInput | string[]
   orderIndex?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -716,8 +737,8 @@ export type ColumnCreateWithoutParentColumnInput = {
   id?: string
   name: string
   type?: $Enums.ColumnType
-  isFormula?: boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnCreateformulaOperandIdsInput | string[]
   orderIndex?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -731,8 +752,8 @@ export type ColumnUncheckedCreateWithoutParentColumnInput = {
   sheetId: string
   name: string
   type?: $Enums.ColumnType
-  isFormula?: boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnCreateformulaOperandIdsInput | string[]
   orderIndex?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -765,8 +786,8 @@ export type ColumnUpdateWithoutChildColumnsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumColumnTypeFieldUpdateOperationsInput | $Enums.ColumnType
-  isFormula?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: Prisma.NullableEnumFormulaOpFieldUpdateOperationsInput | $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnUpdateformulaOperandIdsInput | string[]
   orderIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -781,8 +802,8 @@ export type ColumnUncheckedUpdateWithoutChildColumnsInput = {
   parentColumnId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumColumnTypeFieldUpdateOperationsInput | $Enums.ColumnType
-  isFormula?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: Prisma.NullableEnumFormulaOpFieldUpdateOperationsInput | $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnUpdateformulaOperandIdsInput | string[]
   orderIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -809,8 +830,8 @@ export type ColumnCreateWithoutCellsInput = {
   id?: string
   name: string
   type?: $Enums.ColumnType
-  isFormula?: boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnCreateformulaOperandIdsInput | string[]
   orderIndex?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -825,8 +846,8 @@ export type ColumnUncheckedCreateWithoutCellsInput = {
   parentColumnId?: string | null
   name: string
   type?: $Enums.ColumnType
-  isFormula?: boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnCreateformulaOperandIdsInput | string[]
   orderIndex?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -853,8 +874,8 @@ export type ColumnUpdateWithoutCellsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumColumnTypeFieldUpdateOperationsInput | $Enums.ColumnType
-  isFormula?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: Prisma.NullableEnumFormulaOpFieldUpdateOperationsInput | $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnUpdateformulaOperandIdsInput | string[]
   orderIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -869,8 +890,8 @@ export type ColumnUncheckedUpdateWithoutCellsInput = {
   parentColumnId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumColumnTypeFieldUpdateOperationsInput | $Enums.ColumnType
-  isFormula?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: Prisma.NullableEnumFormulaOpFieldUpdateOperationsInput | $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnUpdateformulaOperandIdsInput | string[]
   orderIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -882,8 +903,8 @@ export type ColumnCreateManySheetInput = {
   parentColumnId?: string | null
   name: string
   type?: $Enums.ColumnType
-  isFormula?: boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnCreateformulaOperandIdsInput | string[]
   orderIndex?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -893,8 +914,8 @@ export type ColumnUpdateWithoutSheetInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumColumnTypeFieldUpdateOperationsInput | $Enums.ColumnType
-  isFormula?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: Prisma.NullableEnumFormulaOpFieldUpdateOperationsInput | $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnUpdateformulaOperandIdsInput | string[]
   orderIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -908,8 +929,8 @@ export type ColumnUncheckedUpdateWithoutSheetInput = {
   parentColumnId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumColumnTypeFieldUpdateOperationsInput | $Enums.ColumnType
-  isFormula?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: Prisma.NullableEnumFormulaOpFieldUpdateOperationsInput | $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnUpdateformulaOperandIdsInput | string[]
   orderIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -922,8 +943,8 @@ export type ColumnUncheckedUpdateManyWithoutSheetInput = {
   parentColumnId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumColumnTypeFieldUpdateOperationsInput | $Enums.ColumnType
-  isFormula?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: Prisma.NullableEnumFormulaOpFieldUpdateOperationsInput | $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnUpdateformulaOperandIdsInput | string[]
   orderIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -934,8 +955,8 @@ export type ColumnCreateManyParentColumnInput = {
   sheetId: string
   name: string
   type?: $Enums.ColumnType
-  isFormula?: boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnCreateformulaOperandIdsInput | string[]
   orderIndex?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -945,8 +966,8 @@ export type ColumnUpdateWithoutParentColumnInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumColumnTypeFieldUpdateOperationsInput | $Enums.ColumnType
-  isFormula?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: Prisma.NullableEnumFormulaOpFieldUpdateOperationsInput | $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnUpdateformulaOperandIdsInput | string[]
   orderIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -960,8 +981,8 @@ export type ColumnUncheckedUpdateWithoutParentColumnInput = {
   sheetId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumColumnTypeFieldUpdateOperationsInput | $Enums.ColumnType
-  isFormula?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: Prisma.NullableEnumFormulaOpFieldUpdateOperationsInput | $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnUpdateformulaOperandIdsInput | string[]
   orderIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -974,8 +995,8 @@ export type ColumnUncheckedUpdateManyWithoutParentColumnInput = {
   sheetId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumColumnTypeFieldUpdateOperationsInput | $Enums.ColumnType
-  isFormula?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  formulaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  formulaOp?: Prisma.NullableEnumFormulaOpFieldUpdateOperationsInput | $Enums.FormulaOp | null
+  formulaOperandIds?: Prisma.ColumnUpdateformulaOperandIdsInput | string[]
   orderIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1027,8 +1048,8 @@ export type ColumnSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   parentColumnId?: boolean
   name?: boolean
   type?: boolean
-  isFormula?: boolean
-  formulaDefinition?: boolean
+  formulaOp?: boolean
+  formulaOperandIds?: boolean
   orderIndex?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1045,8 +1066,8 @@ export type ColumnSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   parentColumnId?: boolean
   name?: boolean
   type?: boolean
-  isFormula?: boolean
-  formulaDefinition?: boolean
+  formulaOp?: boolean
+  formulaOperandIds?: boolean
   orderIndex?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1060,8 +1081,8 @@ export type ColumnSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   parentColumnId?: boolean
   name?: boolean
   type?: boolean
-  isFormula?: boolean
-  formulaDefinition?: boolean
+  formulaOp?: boolean
+  formulaOperandIds?: boolean
   orderIndex?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1075,14 +1096,14 @@ export type ColumnSelectScalar = {
   parentColumnId?: boolean
   name?: boolean
   type?: boolean
-  isFormula?: boolean
-  formulaDefinition?: boolean
+  formulaOp?: boolean
+  formulaOperandIds?: boolean
   orderIndex?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ColumnOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "sheetId" | "parentColumnId" | "name" | "type" | "isFormula" | "formulaDefinition" | "orderIndex" | "createdAt" | "updatedAt", ExtArgs["result"]["column"]>
+export type ColumnOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "sheetId" | "parentColumnId" | "name" | "type" | "formulaOp" | "formulaOperandIds" | "orderIndex" | "createdAt" | "updatedAt", ExtArgs["result"]["column"]>
 export type ColumnInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sheet?: boolean | Prisma.SheetDefaultArgs<ExtArgs>
   parentColumn?: boolean | Prisma.Column$parentColumnArgs<ExtArgs>
@@ -1113,8 +1134,8 @@ export type $ColumnPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     parentColumnId: string | null
     name: string
     type: $Enums.ColumnType
-    isFormula: boolean
-    formulaDefinition: runtime.JsonValue | null
+    formulaOp: $Enums.FormulaOp | null
+    formulaOperandIds: string[]
     orderIndex: number
     createdAt: Date
     updatedAt: Date
@@ -1550,8 +1571,8 @@ export interface ColumnFieldRefs {
   readonly parentColumnId: Prisma.FieldRef<"Column", 'String'>
   readonly name: Prisma.FieldRef<"Column", 'String'>
   readonly type: Prisma.FieldRef<"Column", 'ColumnType'>
-  readonly isFormula: Prisma.FieldRef<"Column", 'Boolean'>
-  readonly formulaDefinition: Prisma.FieldRef<"Column", 'Json'>
+  readonly formulaOp: Prisma.FieldRef<"Column", 'FormulaOp'>
+  readonly formulaOperandIds: Prisma.FieldRef<"Column", 'String[]'>
   readonly orderIndex: Prisma.FieldRef<"Column", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Column", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Column", 'DateTime'>

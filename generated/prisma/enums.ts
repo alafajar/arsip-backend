@@ -46,3 +46,18 @@ export const ChangeAction = {
 } as const
 
 export type ChangeAction = (typeof ChangeAction)[keyof typeof ChangeAction]
+
+
+export const FormulaOp = {
+  ADD: 'ADD',
+  SUB: 'SUB',
+  MUL: 'MUL',
+  DIV: 'DIV',
+  SUM: 'SUM',
+  AVERAGE: 'AVERAGE',
+  COUNT: 'COUNT',
+  MAX: 'MAX',
+  MIN: 'MIN'
+} as const
+
+export type FormulaOp = (typeof FormulaOp)[keyof typeof FormulaOp]

@@ -150,8 +150,8 @@ export const ColumnScalarFieldEnum = {
   parentColumnId: 'parentColumnId',
   name: 'name',
   type: 'type',
-  isFormula: 'isFormula',
-  formulaDefinition: 'formulaDefinition',
+  formulaOp: 'formulaOp',
+  formulaOperandIds: 'formulaOperandIds',
   orderIndex: 'orderIndex',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
