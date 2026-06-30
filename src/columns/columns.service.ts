@@ -50,8 +50,10 @@ export class ColumnsService {
           type: dto.type,
           orderIndex,
           parentColumnId: dto.parentColumnId ?? null,
+          ...(dto.formulaOp !== undefined && { formulaOp: dto.formulaOp }),
+          ...(dto.formulaOperandIds !== undefined && { formulaOperandIds: dto.formulaOperandIds }),
         },
-        select: { id: true, sheetId: true, name: true, type: true, orderIndex: true, parentColumnId: true },
+        select: { id: true, sheetId: true, name: true, type: true, orderIndex: true, parentColumnId: true, formulaOp: true, formulaOperandIds: true },
       });
 
       await tx.changeLog.create({

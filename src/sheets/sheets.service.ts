@@ -1,5 +1,6 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { ChangeAction, ColumnType } from '../../generated/prisma/client';
+import { FormulaOp } from '../../generated/prisma/enums';
 import { PrismaService } from '../prisma/prisma.service';
 import { validateValueForType } from '../columns/column-value.validator';
 import { CreateRowDto } from './dto/create-row.dto';
@@ -20,6 +21,63 @@ function normalizeFacets(raw?: Record<string, unknown>): FacetFilter[] {
       return { columnId, values };
     })
     .filter((f) => f.values.length > 0);
+}
+
+function toNum(v: string | null | undefined): number | null {
+  if (v === null || v === undefined || v.trim() === '') return null;
+  const n = Number(v);
+  return isNaN(n) || !isFinite(n) ? null : n;
+}
+
+function fmt(n: number): string {
+  // Hilangkan floating-point noise (mis. 0.30000000000000004 → "0.3")
+  return parseFloat(n.toPrecision(10)).toString();
+}
+
+function computeFormula(op: FormulaOp, rawValues: (string | null)[]): string {
+  switch (op) {
+    case FormulaOp.ADD:
+    case FormulaOp.SUM: {
+      const nums = rawValues.map(toNum).filter((n): n is number => n !== null);
+      return nums.length === 0 ? '' : fmt(nums.reduce((a, b) => a + b, 0));
+    }
+    case FormulaOp.SUB: {
+      const nums = rawValues.map(toNum);
+      if (nums.some((n) => n === null) || nums.length === 0) return '';
+      return fmt((nums as number[]).slice(1).reduce((a, b) => a - b, (nums as number[])[0]));
+    }
+    case FormulaOp.MUL: {
+      const nums = rawValues.map(toNum).filter((n): n is number => n !== null);
+      return nums.length === 0 ? '' : fmt(nums.reduce((a, b) => a * b, 1));
+    }
+    case FormulaOp.DIV: {
+      const nums = rawValues.map(toNum);
+      if (nums.some((n) => n === null) || nums.length === 0) return '';
+      const vs = nums as number[];
+      for (let i = 1; i < vs.length; i++) {
+        if (vs[i] === 0) return '';
+      }
+      return fmt(vs.slice(1).reduce((a, b) => a / b, vs[0]));
+    }
+    case FormulaOp.AVERAGE: {
+      const nums = rawValues.map(toNum).filter((n): n is number => n !== null);
+      return nums.length === 0 ? '' : fmt(nums.reduce((a, b) => a + b, 0) / nums.length);
+    }
+    case FormulaOp.COUNT: {
+      const count = rawValues.map(toNum).filter((n): n is number => n !== null).length;
+      return String(count);
+    }
+    case FormulaOp.MAX: {
+      const nums = rawValues.map(toNum).filter((n): n is number => n !== null);
+      return nums.length === 0 ? '' : fmt(Math.max(...nums));
+    }
+    case FormulaOp.MIN: {
+      const nums = rawValues.map(toNum).filter((n): n is number => n !== null);
+      return nums.length === 0 ? '' : fmt(Math.min(...nums));
+    }
+    default:
+      return '';
+  }
 }
 
 export interface ColumnNode {
@@ -81,13 +139,21 @@ export class SheetsService {
     });
     if (!sheet) throw new NotFoundException('Sheet tidak ditemukan');
 
-    // Ambil semua columnId sheet — untuk null-fill respons dan validasi filter
+    // Ambil semua kolom sheet — id + formula fields (untuk null-fill, filter, dan komputasi)
     const columns = await this.prisma.column.findMany({
       where: { sheetId },
-      select: { id: true },
+      select: { id: true, formulaOp: true, formulaOperandIds: true },
     });
     const allColumnIds = columns.map((c) => c.id);
     const columnIdSet = new Set(allColumnIds);
+
+    // Peta kolom formula: columnId → { op, operandIds }
+    type FormulaEntry = { op: FormulaOp; operandIds: string[] };
+    const formulaMap = new Map<string, FormulaEntry>(
+      columns
+        .filter((c): c is typeof c & { formulaOp: FormulaOp } => c.formulaOp !== null)
+        .map((c) => [c.id, { op: c.formulaOp, operandIds: c.formulaOperandIds }]),
+    );
 
     // Validasi dan normalisasi filter
     const facets = normalizeFacets(rawFilter);
@@ -132,6 +198,11 @@ export class SheetsService {
       for (const cell of row.cells) {
         cells[cell.columnId] = cell.value ?? null;
       }
+      // Hitung nilai kolom formula (horizontal, per baris) — tidak disimpan, dihitung saat read
+      for (const [colId, { op, operandIds }] of formulaMap) {
+        const operandValues = operandIds.map((oid) => cells[oid] ?? null);
+        cells[colId] = computeFormula(op, operandValues);
+      }
       return { rowId: row.id, orderIndex: row.orderIndex, cells };
     });
 
@@ -154,13 +225,13 @@ export class SheetsService {
     // 2. Ambil semua kolom sheet: leaf map (untuk validasi) + all IDs (untuk null-fill respons)
     const allColumns = await this.prisma.column.findMany({
       where: { sheetId },
-      select: { id: true, name: true, type: true, _count: { select: { childColumns: true } } },
+      select: { id: true, name: true, type: true, formulaOp: true, _count: { select: { childColumns: true } } },
     });
     const allColumnIds = allColumns.map((c) => c.id);
     const leafMap = new Map(
       allColumns
         .filter((c) => c._count.childColumns === 0)
-        .map((c) => [c.id, { name: c.name, type: c.type }]),
+        .map((c) => [c.id, { name: c.name, type: c.type, isFormula: c.formulaOp !== null }]),
     );
 
     // 3. Validasi berlapis — fail-fast sebelum menyentuh DB tulis
@@ -170,6 +241,11 @@ export class SheetsService {
       if (!col) {
         throw new BadRequestException(
           `columnId "${cell.columnId}" tidak ditemukan di sheet ini atau merupakan node grup.`,
+        );
+      }
+      if (col.isFormula) {
+        throw new BadRequestException(
+          `columnId "${cell.columnId}" adalah kolom formula dan tidak bisa ditulis secara langsung.`,
         );
       }
       if (seenIds.has(cell.columnId)) {
@@ -242,13 +318,13 @@ export class SheetsService {
     // 3. Ambil semua kolom sheet: leaf map (validasi) + all IDs (null-fill respons)
     const allColumns = await this.prisma.column.findMany({
       where: { sheetId },
-      select: { id: true, name: true, type: true, _count: { select: { childColumns: true } } },
+      select: { id: true, name: true, type: true, formulaOp: true, _count: { select: { childColumns: true } } },
     });
     const allColumnIds = allColumns.map((c) => c.id);
     const leafMap = new Map(
       allColumns
         .filter((c) => c._count.childColumns === 0)
-        .map((c) => [c.id, { name: c.name, type: c.type }]),
+        .map((c) => [c.id, { name: c.name, type: c.type, isFormula: c.formulaOp !== null }]),
     );
 
     // 4. Validasi berlapis — fail-fast
@@ -258,6 +334,11 @@ export class SheetsService {
       if (!col) {
         throw new BadRequestException(
           `columnId "${cell.columnId}" tidak ditemukan di sheet ini atau merupakan node grup.`,
+        );
+      }
+      if (col.isFormula) {
+        throw new BadRequestException(
+          `columnId "${cell.columnId}" adalah kolom formula dan tidak bisa ditulis secara langsung.`,
         );
       }
       if (seenIds.has(cell.columnId)) {
