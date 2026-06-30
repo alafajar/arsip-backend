@@ -3,6 +3,7 @@ import { ChangeAction, ColumnType } from '../../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { validateValueForType } from '../columns/column-value.validator';
 import { CreateRowDto } from './dto/create-row.dto';
+import { CreateSheetDto } from './dto/create-sheet.dto';
 import { UpdateRowDto } from './dto/update-row.dto';
 
 interface FacetFilter { columnId: string; values: string[] }
@@ -399,6 +400,47 @@ export class SheetsService {
       .filter((v) => v !== null && v.trim() !== '');
 
     return { values, total: values.length };
+  }
+
+  async createSheet(dto: CreateSheetDto, userId: string) {
+    const menu = await this.prisma.menuItem.findUnique({
+      where: { id: dto.menuItemId },
+      select: { id: true },
+    });
+    if (!menu) throw new NotFoundException('Menu item tidak ditemukan');
+
+    const sheet = await this.prisma.$transaction(async (tx) => {
+      const last = await tx.sheet.findFirst({
+        where: { menuItemId: dto.menuItemId },
+        orderBy: { orderIndex: 'desc' },
+        select: { orderIndex: true },
+      });
+      const orderIndex = (last?.orderIndex ?? 0) + 1;
+
+      const created = await tx.sheet.create({
+        data: {
+          name: dto.name,
+          menuItemId: dto.menuItemId,
+          orderIndex,
+          isReadOnly: false,
+        },
+        select: { id: true, name: true, menuItemId: true, isReadOnly: true, orderIndex: true },
+      });
+
+      await tx.changeLog.create({
+        data: {
+          userId,
+          entityType: 'Sheet',
+          entityId: created.id,
+          action: ChangeAction.CREATE,
+          afterData: { name: dto.name, menuItemId: dto.menuItemId, orderIndex },
+        },
+      });
+
+      return created;
+    });
+
+    return sheet;
   }
 
   async findById(id: string) {

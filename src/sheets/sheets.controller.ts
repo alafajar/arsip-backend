@@ -25,6 +25,7 @@ import {
 import { Roles, Role } from '../auth/decorators/roles.decorator';
 import { SheetsService } from './sheets.service';
 import { CreateRowDto } from './dto/create-row.dto';
+import { CreateSheetDto } from './dto/create-sheet.dto';
 import { UpdateRowDto } from './dto/update-row.dto';
 
 @ApiTags('Sheets')
@@ -32,6 +33,21 @@ import { UpdateRowDto } from './dto/update-row.dto';
 @Controller('sheets')
 export class SheetsController {
   constructor(private readonly sheetsService: SheetsService) {}
+
+  @Post()
+  @Roles(Role.ADMIN)
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Buat sheet kosong baru (ADMIN)', description: 'Sheet dibuat tanpa kolom dan baris; tambah kolom via endpoint column CRUD.' })
+  @ApiResponse({ status: 201, schema: { example: { id: 'uuid', name: 'Data Dosen 2025', menuItemId: 'uuid', isReadOnly: false, orderIndex: 1 } } })
+  @ApiResponse({ status: 400, description: 'Validasi gagal.' })
+  @ApiResponse({ status: 403, description: 'Hanya ADMIN.' })
+  @ApiResponse({ status: 404, description: 'Menu item tidak ditemukan.' })
+  createSheet(
+    @Body() dto: CreateSheetDto,
+    @Request() req: { user: { id: string } },
+  ) {
+    return this.sheetsService.createSheet(dto, req.user.id);
+  }
 
   @Get(':id')
   @ApiOperation({ summary: 'Metadata sheet (nama, menu, dll.)' })
