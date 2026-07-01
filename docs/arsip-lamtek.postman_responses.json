@@ -1,0 +1,2370 @@
+{
+  "info": {
+    "name": "Arsip LAMTEK API — Captured Responses",
+    "description": "Koleksi Postman untuk Arsip LAMTEK API, dibangun dari eksekusi nyata terhadap server lokal (bukan hanya skema Swagger). Setiap request menyertakan contoh response asli (status + body) hasil pemanggilan endpoint sungguhan, termasuk kasus error (401/403/404/409/500).\n\nSet variable `baseUrl` (default http://localhost:3000) dan `accessToken` (dari response login) di environment Postman sebelum menjalankan request yang butuh auth.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/health",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "health"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": \"ok\",\n  \"db\": \"connected\",\n  \"timestamp\": \"2026-07-01T19:29:34.866Z\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"Admin@1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "201 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"Admin@1234\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlY2RiNGQ4OS1lZDE2LTQ1NzgtYWY3ZC1jNjBmMzAwZjkxOWQiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3ODI5MzQxNzUsImV4cCI6MTc4MjkzNTA3NX0.yhE_0nya81XHgmDu3WP8X5HqVflAsY9ta4urr_o8-qY\",\n  \"user\": {\n    \"id\": \"ecdb4d89-ed16-4578-af7d-c60f300f919d\",\n    \"username\": \"admin\",\n    \"fullName\": \"Administrator\",\n    \"role\": \"ADMIN\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Login (kaprodi)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"kaprodi\",\n  \"password\": \"Kaprodi@1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "201 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"kaprodi\",\n  \"password\": \"Kaprodi@1234\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlZWVjNzlmOS0xZmZlLTQ3MTctYjMzMy1kYzE4NTM5N2YyNTgiLCJyb2xlIjoiS0FQUk9ESSIsImlhdCI6MTc4MjkzNDE3NSwiZXhwIjoxNzgyOTM1MDc1fQ.bA2mIEKRoLtyH15zHKDrYej_Hz1F3bAbGK6QQ0xEBpc\",\n  \"user\": {\n    \"id\": \"eeec79f9-1ffe-4717-b333-dc185397f258\",\n    \"username\": \"kaprodi\",\n    \"fullName\": \"Kepala Program Studi\",\n    \"role\": \"KAPRODI\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Login (wrong password)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"salah\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "401 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"salah\"\n}"
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Username atau password salah\",\n  \"error\": \"Unauthorized\",\n  \"statusCode\": 401\n}"
+            }
+          ]
+        },
+        {
+          "name": "Me (admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"ecdb4d89-ed16-4578-af7d-c60f300f919d\",\n  \"username\": \"admin\",\n  \"role\": \"ADMIN\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Test read (admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/test-read",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "test-read"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/test-read",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "test-read"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"ok\": true,\n  \"message\": \"Semua user login boleh baca\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Test write (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/test-write",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "test-write"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "201 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/test-write",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "test-write"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}"
+                }
+              },
+              "status": "OK",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"ok\": true,\n  \"message\": \"Hanya ADMIN yang sampai sini\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Test write (kaprodi, forbidden)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/test-write",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "test-write"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "403 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/test-write",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "test-write"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}"
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Forbidden\",\n  \"statusCode\": 403\n}"
+            }
+          ]
+        },
+        {
+          "name": "No token (unauthorized)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "401 response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Unauthorized\",\n  \"statusCode\": 401\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Menus",
+      "item": [
+        {
+          "name": "List menus (admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/menus",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "menus"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/menus",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "menus"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": \"00000000-0000-0000-0001-000000000001\",\n    \"name\": \"Kriteria\",\n    \"orderIndex\": 0,\n    \"sheets\": [],\n    \"children\": [\n      {\n        \"id\": \"00000000-0000-0000-0001-000000000002\",\n        \"name\": \"DTPS\",\n        \"orderIndex\": 0,\n        \"sheets\": [\n          {\n            \"id\": \"00000000-0000-0000-0002-000000000001\",\n            \"name\": \"DTPS\"\n          },\n          {\n            \"id\": \"e10282f9-b17a-4a0d-a428-b2eef2562fe1\",\n            \"name\": \"Test Sheet Kosong\"\n          },\n          {\n            \"id\": \"b1ba5e9c-9c3f-46a9-b272-4e01acfa550e\",\n            \"name\": \"Sheet Kedua\"\n          },\n          {\n            \"id\": \"d5ac6098-0881-48f2-b4c9-5fcfc264bdcf\",\n            \"name\": \"Tes CRUD Kolom\"\n          },\n          {\n            \"id\": \"2ff4e20b-f80b-46b7-b15a-862743541476\",\n            \"name\": \"Tes Formula Schema\"\n          },\n          {\n            \"id\": \"2da36de4-7d63-4680-a438-d4ea1e818731\",\n            \"name\": \"Tes Formula Compute\"\n          },\n          {\n            \"id\": \"f69f02ef-045f-4ecb-af05-8fc6898f6bcc\",\n            \"name\": \"Tes Formula Edge Case\"\n          },\n          {\n            \"id\": \"8d8c7fe7-b2d1-40ae-a896-c819bdb95a7f\",\n            \"name\": \"Tes Formula CRUD\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"00000000-0000-0000-0001-000000000003\",\n        \"name\": \"Profil Dosen\",\n        \"orderIndex\": 1,\n        \"sheets\": [],\n        \"children\": []\n      },\n      {\n        \"id\": \"eed1af42-e138-4115-83db-e77c3f3f52ac\",\n        \"name\": \"smoke-test-minimal\",\n        \"orderIndex\": 2,\n        \"sheets\": [],\n        \"children\": [\n          {\n            \"id\": \"c86780de-e94d-4fa0-9bce-5a80349a461a\",\n            \"name\": \"Smoke Sheet A\",\n            \"orderIndex\": 1,\n            \"sheets\": [\n              {\n                \"id\": \"615445f8-02af-447b-a45a-22790375f009\",\n                \"name\": \"Smoke Sheet A\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"a14f863a-5f00-465f-bdc4-a8d7bef7b54f\",\n            \"name\": \"Smoke Sheet B\",\n            \"orderIndex\": 2,\n            \"sheets\": [\n              {\n                \"id\": \"67ff82b2-277d-43b4-b4aa-18864ad6e5dc\",\n                \"name\": \"Smoke Sheet B\"\n              }\n            ],\n            \"children\": []\n          }\n        ]\n      }\n    ]\n  },\n  {\n    \"id\": \"00000000-0000-0000-0001-000000000004\",\n    \"name\": \"Kurikulum\",\n    \"orderIndex\": 1,\n    \"sheets\": [],\n    \"children\": [\n      {\n        \"id\": \"74e88597-124e-4b7e-86c0-42f7b3259f9d\",\n        \"name\": \"Final Lampiran Dokumen\",\n        \"orderIndex\": 1,\n        \"sheets\": [],\n        \"children\": [\n          {\n            \"id\": \"c63b85aa-ce1a-4922-a1e9-61a79fd07d63\",\n            \"name\": \"PS\",\n            \"orderIndex\": 1,\n            \"sheets\": [\n              {\n                \"id\": \"93d05277-8700-461e-8c23-5de92a95ad80\",\n                \"name\": \"PS\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"e3d72408-e303-49e5-b015-9bf8b28e5705\",\n            \"name\": \"Kebijakan\",\n            \"orderIndex\": 2,\n            \"sheets\": [\n              {\n                \"id\": \"bfc745d7-5e7a-404b-9336-b8e2fd0086e8\",\n                \"name\": \"Kebijakan\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"3763fdfe-37d4-4331-8d8b-64afab2381eb\",\n            \"name\": \"1. Kondisi Eksternal\",\n            \"orderIndex\": 3,\n            \"sheets\": [\n              {\n                \"id\": \"e9a76782-4302-490d-8690-8e3c63c3a8ed\",\n                \"name\": \"1. Kondisi Eksternal\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"3297303d-6234-4db6-8d00-7bf741ba121a\",\n            \"name\": \"3. Kesesuaian VMTS PT, UPPS, PS\",\n            \"orderIndex\": 4,\n            \"sheets\": [\n              {\n                \"id\": \"409b5e7e-3c25-4297-84ac-7443ed45765a\",\n                \"name\": \"3. Kesesuaian VMTS PT, UPPS, PS\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"c4d4a772-dacd-4014-888c-c323ce24711b\",\n            \"name\": \"4. Penyusunan-Perubahan VMTS PS\",\n            \"orderIndex\": 5,\n            \"sheets\": [\n              {\n                \"id\": \"dc2e7b2f-890a-43a3-9aa5-1b9e422b342a\",\n                \"name\": \"4. Penyusunan-Perubahan VMTS PS\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"1f6b19a7-433b-4562-83f7-0891bb031413\",\n            \"name\": \"5. Pemahaman VMTS PS\",\n            \"orderIndex\": 6,\n            \"sheets\": [\n              {\n                \"id\": \"3b7e2495-ccfe-4fe2-8396-7579f08a0bd7\",\n                \"name\": \"5. Pemahaman VMTS PS\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"62b65a38-3c2e-40b6-86c7-7fc12f636628\",\n            \"name\": \"6. Strategi Pencapaian Tujuan\",\n            \"orderIndex\": 7,\n            \"sheets\": [\n              {\n                \"id\": \"f3275039-efae-4a02-9d44-1bb7a1e6066e\",\n                \"name\": \"6. Strategi Pencapaian Tujuan\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"cf0d709d-a81f-4a2c-9952-2ffc5aa7ad52\",\n            \"name\": \"10. Kerjasama - Pendidikan\",\n            \"orderIndex\": 8,\n            \"sheets\": [\n              {\n                \"id\": \"55fe49e4-f7f2-4ccd-afc8-72c1117de1e2\",\n                \"name\": \"10. Kerjasama - Pendidikan\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"c8205c52-ca91-4b6f-9b57-f0955443da52\",\n            \"name\": \"10. Kerjasama - Penelitian\",\n            \"orderIndex\": 9,\n            \"sheets\": [\n              {\n                \"id\": \"161d5b42-bfe1-49dd-b7be-2224078da897\",\n                \"name\": \"10. Kerjasama - Penelitian\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"c2d0fd75-00b7-421d-9f9c-a9b22f6a7790\",\n            \"name\": \"10. Kerjasama - PkM\",\n            \"orderIndex\": 10,\n            \"sheets\": [\n              {\n                \"id\": \"b5e63585-bb3a-4f9c-bc13-514798b24eb8\",\n                \"name\": \"10. Kerjasama - PkM\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"8225df4a-02b7-401e-a484-033557f5bde0\",\n            \"name\": \"13. Seleksi Mahasiswa\",\n            \"orderIndex\": 11,\n            \"sheets\": [\n              {\n                \"id\": \"8557a315-5340-47fb-b4c8-3e879aa9a55a\",\n                \"name\": \"13. Seleksi Mahasiswa\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"7ef0ffa6-6de6-4eaa-96b9-bae66ac7a094\",\n            \"name\": \"14. Peningkatan Animo\",\n            \"orderIndex\": 12,\n            \"sheets\": [\n              {\n                \"id\": \"d011015d-9373-4e12-b8b4-12e57d00906b\",\n                \"name\": \"14. Peningkatan Animo\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"3a5eb52c-e341-4a11-b080-b76c05a9a652\",\n            \"name\": \"15A. Layanan Mhs (Beasiswa)\",\n            \"orderIndex\": 13,\n            \"sheets\": [\n              {\n                \"id\": \"460f6563-ca56-4a71-9af6-4f41507cd58c\",\n                \"name\": \"15A. Layanan Mhs (Beasiswa)\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"6116672d-77fd-4020-b929-f82b87e592cd\",\n            \"name\": \"15B. Nalar, Minat dan Bakat Mhs\",\n            \"orderIndex\": 14,\n            \"sheets\": [\n              {\n                \"id\": \"4eeb1e0e-5605-463f-b2c2-30a1ffcfe78d\",\n                \"name\": \"15B. Nalar, Minat dan Bakat Mhs\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"177d1256-f79b-4a77-b197-8d1472503312\",\n            \"name\": \"16, 17, 18, 19 Data Dosen Tetap\",\n            \"orderIndex\": 15,\n            \"sheets\": [\n              {\n                \"id\": \"0856ec0b-c61c-4984-b8af-807fc3c7bd9b\",\n                \"name\": \"16, 17, 18, 19 Data Dosen Tetap\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"fd0d832c-53b9-4b53-99b6-2a7b7985f513\",\n            \"name\": \"20. Pembimbingan TA\",\n            \"orderIndex\": 16,\n            \"sheets\": [\n              {\n                \"id\": \"a9d4b4eb-df07-4a2a-9d52-20b6945b0ff1\",\n                \"name\": \"20. Pembimbingan TA\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"a1b2c6b7-98d1-4c22-922e-c8904604a99b\",\n            \"name\": \"21. EWMP\",\n            \"orderIndex\": 17,\n            \"sheets\": [\n              {\n                \"id\": \"6802b9cd-b864-44f6-af9a-9b7df13f41b3\",\n                \"name\": \"21. EWMP\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"9882ab20-9fdd-494a-86af-912d8f83bb53\",\n            \"name\": \"22. Dosen Tidak Tetap\",\n            \"orderIndex\": 18,\n            \"sheets\": [\n              {\n                \"id\": \"56d5d0a6-0fdf-4e5c-a95b-b9c4a9974932\",\n                \"name\": \"22. Dosen Tidak Tetap\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"3255cd42-5c26-4517-bf61-8d1ba403b38a\",\n            \"name\": \"Dosen Industri-Praktisi\",\n            \"orderIndex\": 19,\n            \"sheets\": [\n              {\n                \"id\": \"53eef28c-3fd5-4d5b-b4f0-93e2aa4944d3\",\n                \"name\": \"Dosen Industri-Praktisi\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"228f1959-aa03-452c-a9bf-dc1f74d67342\",\n            \"name\": \"23. Rekognisi Dosen\",\n            \"orderIndex\": 20,\n            \"sheets\": [\n              {\n                \"id\": \"29dd171c-02fa-46f2-bdf9-48aa27a004e6\",\n                \"name\": \"23. Rekognisi Dosen\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"66ef8c0f-3671-44cf-9e54-b340c01c3fbd\",\n            \"name\": \"24,50,51. Penelitian Dosen-Mhs\",\n            \"orderIndex\": 21,\n            \"sheets\": [\n              {\n                \"id\": \"70f731ff-57e5-48dc-b224-9f392eb13376\",\n                \"name\": \"24,50,51. Penelitian Dosen-Mhs\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"d4e9a9ac-07bb-4df1-9062-b005d8211e65\",\n            \"name\": \"25,52,53. PkM Dosen-Mhs\",\n            \"orderIndex\": 22,\n            \"sheets\": [\n              {\n                \"id\": \"157ca8a8-9158-4bfd-901c-a2c9d38844e4\",\n                \"name\": \"25,52,53. PkM Dosen-Mhs\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"3d33d8ad-36a5-493c-8aac-146962b4fb98\",\n            \"name\": \"26&66. Publikasi Dosen-Mhs\",\n            \"orderIndex\": 23,\n            \"sheets\": [\n              {\n                \"id\": \"a87f7d7b-9383-4cdc-81b6-9086c7392239\",\n                \"name\": \"26&66. Publikasi Dosen-Mhs\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"4bc999ed-2b38-459d-a68a-51f986db1399\",\n            \"name\": \"27. Sitasi Dosen\",\n            \"orderIndex\": 24,\n            \"sheets\": [\n              {\n                \"id\": \"9699f585-2c33-408c-96fb-df5eaff9ca2c\",\n                \"name\": \"27. Sitasi Dosen\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"dcac8dcf-982e-4966-80bc-78ebd80ed625\",\n            \"name\": \"28&67. Luaran Dosen-Mahasiswa\",\n            \"orderIndex\": 25,\n            \"sheets\": [\n              {\n                \"id\": \"f7a81a06-0ccb-4e74-8129-f998f978f23d\",\n                \"name\": \"28&67. Luaran Dosen-Mahasiswa\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"e4808834-5a41-4635-886f-5b5211e17cdd\",\n            \"name\": \"29. Pengembangan Dosen\",\n            \"orderIndex\": 26,\n            \"sheets\": [\n              {\n                \"id\": \"cf8de007-64b6-407c-9182-5208373488ff\",\n                \"name\": \"29. Pengembangan Dosen\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"c2e2b5e8-d3cf-4ff1-8eb7-7ae4df8d614f\",\n            \"name\": \"30. Tendik\",\n            \"orderIndex\": 27,\n            \"sheets\": [\n              {\n                \"id\": \"90330103-769f-4294-91f2-7264c0c27dcc\",\n                \"name\": \"30. Tendik\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"1d048b85-baec-417f-8a77-32c2727fe6f9\",\n            \"name\": \"31, 32, 33. Keuangan\",\n            \"orderIndex\": 28,\n            \"sheets\": [\n              {\n                \"id\": \"b9d1a335-3df6-4d8e-b328-926d4037c366\",\n                \"name\": \"31, 32, 33. Keuangan\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"93901547-fba1-4c4f-a34f-b194eaef9b0d\",\n            \"name\": \"34, 35. Reliasasi dan Kecukupan\",\n            \"orderIndex\": 29,\n            \"sheets\": [\n              {\n                \"id\": \"ccfd9d61-2e33-4fb8-b285-8c624841850a\",\n                \"name\": \"34, 35. Reliasasi dan Kecukupan\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"266e755b-9b5b-410f-b1c5-7949c36ec9e2\",\n            \"name\": \"37. Kurikulum\",\n            \"orderIndex\": 30,\n            \"sheets\": [\n              {\n                \"id\": \"20cf39f1-cbab-4a1f-a069-f21d937409b7\",\n                \"name\": \"37. Kurikulum\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"30695a5d-f956-4a70-bc9b-6f2482d941e3\",\n            \"name\": \"38. Karakteristik Pembelajaran\",\n            \"orderIndex\": 31,\n            \"sheets\": [\n              {\n                \"id\": \"7f5c0134-68d5-4268-8062-188adc236beb\",\n                \"name\": \"38. Karakteristik Pembelajaran\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"d9119d86-c932-4629-8e0f-980c39e243ad\",\n            \"name\": \"39. Rencana Proses Pembelajaran\",\n            \"orderIndex\": 32,\n            \"sheets\": [\n              {\n                \"id\": \"e4a14026-e992-4f91-9730-4c1c16382099\",\n                \"name\": \"39. Rencana Proses Pembelajaran\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"1c68264b-7488-4446-91d6-e9cd405008dc\",\n            \"name\": \"40. Pelaksanaan Pembelajaran\",\n            \"orderIndex\": 33,\n            \"sheets\": [\n              {\n                \"id\": \"cbf321c8-7e79-4d25-9ff5-aaafc047ae88\",\n                \"name\": \"40. Pelaksanaan Pembelajaran\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"411bc84f-a543-4b4c-a27d-8e3ed227c6a6\",\n            \"name\": \"41. RPS Kurikulum\",\n            \"orderIndex\": 34,\n            \"sheets\": [\n              {\n                \"id\": \"58c4a259-114b-4dd9-970f-6a62479987d4\",\n                \"name\": \"41. RPS Kurikulum\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"d021d19b-4df0-4cc0-8cc2-c81692de0886\",\n            \"name\": \"42. Monev Proses Pembelajaran\",\n            \"orderIndex\": 35,\n            \"sheets\": [\n              {\n                \"id\": \"1eb6f135-80ab-4002-8e1f-8dee1e35ed21\",\n                \"name\": \"42. Monev Proses Pembelajaran\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"f24fb9d5-36fa-4c59-bdcd-915eb5dd4194\",\n            \"name\": \"43. Penilaian Pembelajaran\",\n            \"orderIndex\": 36,\n            \"sheets\": [\n              {\n                \"id\": \"8985808f-49cd-4687-aa50-1dfaceea42d4\",\n                \"name\": \"43. Penilaian Pembelajaran\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"ba2de24a-36b9-429d-a2f3-2c4e1bb22825\",\n            \"name\": \"44. Basic Science\",\n            \"orderIndex\": 37,\n            \"sheets\": [\n              {\n                \"id\": \"22be39bf-05d5-4b99-af0e-72550c2e5b98\",\n                \"name\": \"44. Basic Science\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"da585910-248b-4489-8f6a-fdd434621799\",\n            \"name\": \"45. MK Capstone Design\",\n            \"orderIndex\": 38,\n            \"sheets\": [\n              {\n                \"id\": \"9a35b96a-7680-4d27-aeb8-35637c4c5687\",\n                \"name\": \"45. MK Capstone Design\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"6c2df569-ab21-4457-ac6f-efe07be01504\",\n            \"name\": \"Distribusi Pembimbing TA\",\n            \"orderIndex\": 39,\n            \"sheets\": [\n              {\n                \"id\": \"9035bd97-444a-49e4-8d04-44f4bb7a120f\",\n                \"name\": \"Distribusi Pembimbing TA\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"a509c63b-cb1e-4513-8546-d3cd437905d1\",\n            \"name\": \"46. MBKM\",\n            \"orderIndex\": 40,\n            \"sheets\": [\n              {\n                \"id\": \"61fbf742-830d-4391-9224-903270bfbe25\",\n                \"name\": \"46. MBKM\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"eb1cd7d1-f4d4-4c0c-8d12-530870f8b86d\",\n            \"name\": \"46. Peserta MBKM\",\n            \"orderIndex\": 41,\n            \"sheets\": [\n              {\n                \"id\": \"2522ca91-f1e7-46eb-b5ac-9d21ed044628\",\n                \"name\": \"46. Peserta MBKM\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"62e96899-df56-4bf0-b254-fb570c685cf6\",\n            \"name\": \"47. Integrasi PenelitianPkMMK \",\n            \"orderIndex\": 42,\n            \"sheets\": [\n              {\n                \"id\": \"6de4a726-4400-4b3b-a23d-453860ea899b\",\n                \"name\": \"47. Integrasi PenelitianPkMMK \"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"90449dda-f62a-4de3-bd8c-1756bf6c813e\",\n            \"name\": \"48. Suasana Akademik\",\n            \"orderIndex\": 43,\n            \"sheets\": [\n              {\n                \"id\": \"5e9d9b96-a120-45c8-9ae1-f9c248f3d8a8\",\n                \"name\": \"48. Suasana Akademik\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"cf834b9d-b832-446e-8a23-4399b985e34c\",\n            \"name\": \"49. Kepuasan Mahasiswa\",\n            \"orderIndex\": 44,\n            \"sheets\": [\n              {\n                \"id\": \"49f38572-fb35-4bcb-83cb-e6127044baa5\",\n                \"name\": \"49. Kepuasan Mahasiswa\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"6224b9c8-6ac0-4e36-9778-38901ce88e3d\",\n            \"name\": \"50&52 Roadmap Penelitian - PkM\",\n            \"orderIndex\": 45,\n            \"sheets\": [\n              {\n                \"id\": \"c829b862-bbbe-49ab-929c-ced36d3ccdb3\",\n                \"name\": \"50&52 Roadmap Penelitian - PkM\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"0cdfd1dc-d39a-4509-a332-84899238da3e\",\n            \"name\": \"55. IPK Mahasiswa\",\n            \"orderIndex\": 46,\n            \"sheets\": [\n              {\n                \"id\": \"a5b31339-35e6-48d6-9b69-1175d82ed1b7\",\n                \"name\": \"55. IPK Mahasiswa\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"7521a9a0-c22c-4738-82e5-035bcee75231\",\n            \"name\": \"56. Prestasi Akademik Mahasiswa\",\n            \"orderIndex\": 47,\n            \"sheets\": [\n              {\n                \"id\": \"a87570a4-98f1-417e-be6d-240ea8d100d2\",\n                \"name\": \"56. Prestasi Akademik Mahasiswa\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"0742ea37-ceda-4746-8074-2cc255986482\",\n            \"name\": \"57. Prestasi Non-Akademik Mhs\",\n            \"orderIndex\": 48,\n            \"sheets\": [\n              {\n                \"id\": \"e3b5afae-8f89-43a8-aca1-b24b2d75575a\",\n                \"name\": \"57. Prestasi Non-Akademik Mhs\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"5922634d-2016-494b-800b-87c7bed39ec7\",\n            \"name\": \"58, 59, 60. Masa Studi Lulusan\",\n            \"orderIndex\": 49,\n            \"sheets\": [\n              {\n                \"id\": \"c19a996c-69a9-4dea-b993-e262459e8d8c\",\n                \"name\": \"58, 59, 60. Masa Studi Lulusan\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"3a5186aa-46ea-4d14-b439-185658beedf3\",\n            \"name\": \"61. Tracer Study\",\n            \"orderIndex\": 50,\n            \"sheets\": [\n              {\n                \"id\": \"b5b25cd9-9d61-440a-89f9-40515c9eeb7c\",\n                \"name\": \"61. Tracer Study\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"e095ebbb-dde9-4656-9aa4-3d2bef23654c\",\n            \"name\": \"62. Waktu Tunggu Lulusan\",\n            \"orderIndex\": 51,\n            \"sheets\": [\n              {\n                \"id\": \"b7ddbe35-d350-4f4a-affe-b8997dbd1bc4\",\n                \"name\": \"62. Waktu Tunggu Lulusan\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"1ed46425-0371-45da-a3f4-01740c33b3ca\",\n            \"name\": \"63. Kesesuaian Bidang Kerja\",\n            \"orderIndex\": 52,\n            \"sheets\": [\n              {\n                \"id\": \"b9451e2f-13ae-4291-9cea-1da6c3716920\",\n                \"name\": \"63. Kesesuaian Bidang Kerja\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"3aa70826-0aec-4375-9470-5fb0bff37a0e\",\n            \"name\": \"64. Tempat Kerja Lulusan\",\n            \"orderIndex\": 53,\n            \"sheets\": [\n              {\n                \"id\": \"110c95f7-3077-4af8-9090-4a9771511905\",\n                \"name\": \"64. Tempat Kerja Lulusan\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"8b855412-4cd0-4705-8c68-32a9a1c89f7a\",\n            \"name\": \"65. Kepuasan Pengguna\",\n            \"orderIndex\": 54,\n            \"sheets\": [\n              {\n                \"id\": \"4202269d-95ad-4a9c-a7a1-a6246686077b\",\n                \"name\": \"65. Kepuasan Pengguna\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"94adcd27-1a06-40a0-9cfb-f6710fd50875\",\n            \"name\": \"68. Penjaminan Mutu\",\n            \"orderIndex\": 55,\n            \"sheets\": [\n              {\n                \"id\": \"a3d9fcc0-52b7-4e35-89ac-28cf25854ee5\",\n                \"name\": \"68. Penjaminan Mutu\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"56dc717c-3035-429d-a53c-129ba56a6e15\",\n            \"name\": \"69. Dokumen SPMI\",\n            \"orderIndex\": 56,\n            \"sheets\": [\n              {\n                \"id\": \"656d3246-5e99-49fe-95e9-ed8a387d7dbf\",\n                \"name\": \"69. Dokumen SPMI\"\n              }\n            ],\n            \"children\": []\n          },\n          {\n            \"id\": \"7b145321-f09d-47e7-90ad-4378cc59b6c2\",\n            \"name\": \"71. Survey Kepuasan Stakeholder\",\n            \"orderIndex\": 57,\n            \"sheets\": [\n              {\n                \"id\": \"d5344d69-1e92-496e-90fa-1e9e6e4194ce\",\n                \"name\": \"71. Survey Kepuasan Stakeholder\"\n              }\n            ],\n            \"children\": []\n          }\n        ]\n      }\n    ]\n  },\n  {\n    \"id\": \"18dc2c9d-8d37-4465-8de5-a4347f7813cc\",\n    \"name\": \"smoke-test-minimal\",\n    \"orderIndex\": 2,\n    \"sheets\": [],\n    \"children\": [\n      {\n        \"id\": \"8294d296-9879-425b-b272-dd8f1180a8e4\",\n        \"name\": \"Smoke Sheet A\",\n        \"orderIndex\": 1,\n        \"sheets\": [\n          {\n            \"id\": \"446c153b-1157-45b2-9635-ed9b3699cddb\",\n            \"name\": \"Smoke Sheet A\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"749037c5-f947-4976-9bc2-f1c05b25863f\",\n        \"name\": \"Smoke Sheet B\",\n        \"orderIndex\": 2,\n        \"sheets\": [\n          {\n            \"id\": \"d25f9d0e-8f10-4892-96a7-4c66dca2e5ed\",\n            \"name\": \"Smoke Sheet B\"\n          }\n        ],\n        \"children\": []\n      }\n    ]\n  },\n  {\n    \"id\": \"19a55bd9-d914-4042-90ca-eda6f09db7dd\",\n    \"name\": \"Final Lampiran Dokumen\",\n    \"orderIndex\": 3,\n    \"sheets\": [],\n    \"children\": [\n      {\n        \"id\": \"8668dec4-52bb-4bca-b005-f1c8c960bef4\",\n        \"name\": \"PS\",\n        \"orderIndex\": 1,\n        \"sheets\": [\n          {\n            \"id\": \"f4bbf98d-cdf0-45bb-9d05-71721491bbcb\",\n            \"name\": \"PS\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"a331fc12-2e14-4a86-93c3-b0264afb7c54\",\n        \"name\": \"Kebijakan\",\n        \"orderIndex\": 2,\n        \"sheets\": [\n          {\n            \"id\": \"d424e2c6-a76c-41e1-9400-878dc8c13706\",\n            \"name\": \"Kebijakan\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"d81cf9c0-d8e7-4d9b-8fc8-03899e6131c7\",\n        \"name\": \"1. Kondisi Eksternal\",\n        \"orderIndex\": 3,\n        \"sheets\": [\n          {\n            \"id\": \"36448903-0864-4d48-be7e-1f67ef380694\",\n            \"name\": \"1. Kondisi Eksternal\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"e231050b-44b8-498c-a955-d0af8a148332\",\n        \"name\": \"3. Kesesuaian VMTS PT, UPPS, PS\",\n        \"orderIndex\": 4,\n        \"sheets\": [\n          {\n            \"id\": \"6ca06cc4-02cb-435d-9431-8dff78b6ccc9\",\n            \"name\": \"3. Kesesuaian VMTS PT, UPPS, PS\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"e10d65ba-fa79-4461-8267-acb884aadd32\",\n        \"name\": \"4. Penyusunan-Perubahan VMTS PS\",\n        \"orderIndex\": 5,\n        \"sheets\": [\n          {\n            \"id\": \"6ee38096-d6dd-4155-a05d-df4349b8c8f0\",\n            \"name\": \"4. Penyusunan-Perubahan VMTS PS\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"83e46499-e66c-48af-b816-8d3e076bb7ea\",\n        \"name\": \"5. Pemahaman VMTS PS\",\n        \"orderIndex\": 6,\n        \"sheets\": [\n          {\n            \"id\": \"a62c48ab-c4bf-4b9f-9dfe-1312a1b1ad95\",\n            \"name\": \"5. Pemahaman VMTS PS\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"b677481f-3a9f-414c-b5c5-641891fbd5dd\",\n        \"name\": \"6. Strategi Pencapaian Tujuan\",\n        \"orderIndex\": 7,\n        \"sheets\": [\n          {\n            \"id\": \"be41a555-3600-4605-9c80-2b269ce77317\",\n            \"name\": \"6. Strategi Pencapaian Tujuan\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"c1f8c44e-f440-4a25-8dbe-03ca5fb61a35\",\n        \"name\": \"10. Kerjasama - Pendidikan\",\n        \"orderIndex\": 8,\n        \"sheets\": [\n          {\n            \"id\": \"55137930-acdc-4876-82e0-6ced1407f386\",\n            \"name\": \"10. Kerjasama - Pendidikan\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"ed93e2b7-13e7-4c39-bb7a-28bc5f06b7aa\",\n        \"name\": \"10. Kerjasama - Penelitian\",\n        \"orderIndex\": 9,\n        \"sheets\": [\n          {\n            \"id\": \"3d6322ef-5a9a-4dcc-bbac-7416eaa12a0c\",\n            \"name\": \"10. Kerjasama - Penelitian\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"cb3d2bdd-5874-4b9f-9375-37f174f224f3\",\n        \"name\": \"10. Kerjasama - PkM\",\n        \"orderIndex\": 10,\n        \"sheets\": [\n          {\n            \"id\": \"02e7c3f0-773e-400f-8022-b3e9011d000a\",\n            \"name\": \"10. Kerjasama - PkM\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"9a269634-261d-46b3-9f75-345244f8cda2\",\n        \"name\": \"13. Seleksi Mahasiswa\",\n        \"orderIndex\": 11,\n        \"sheets\": [\n          {\n            \"id\": \"f1a41803-f078-4db4-80e5-df4a812bd520\",\n            \"name\": \"13. Seleksi Mahasiswa\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"26f6fb7e-784a-4500-a084-00d3966a5a8b\",\n        \"name\": \"14. Peningkatan Animo\",\n        \"orderIndex\": 12,\n        \"sheets\": [\n          {\n            \"id\": \"a2f6d19d-8075-4bb1-ad0a-5404a348f444\",\n            \"name\": \"14. Peningkatan Animo\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"f787fad5-74d4-42a6-b324-bd4bd7d96d79\",\n        \"name\": \"15A. Layanan Mhs (Beasiswa)\",\n        \"orderIndex\": 13,\n        \"sheets\": [\n          {\n            \"id\": \"208fad99-3122-4b02-aeb2-3fd830f0cf21\",\n            \"name\": \"15A. Layanan Mhs (Beasiswa)\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"1c2416ae-34b9-46b2-905f-f99c510535c7\",\n        \"name\": \"15B. Nalar, Minat dan Bakat Mhs\",\n        \"orderIndex\": 14,\n        \"sheets\": [\n          {\n            \"id\": \"1d202f03-c94f-4c1d-9c22-22e0496d5cab\",\n            \"name\": \"15B. Nalar, Minat dan Bakat Mhs\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"d0688a47-b861-4831-9534-cedfdd1153d3\",\n        \"name\": \"16, 17, 18, 19 Data Dosen Tetap\",\n        \"orderIndex\": 15,\n        \"sheets\": [\n          {\n            \"id\": \"829ef0f3-69fe-4e2b-ad4a-8cb1d19a32e8\",\n            \"name\": \"16, 17, 18, 19 Data Dosen Tetap\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"b4cc805a-ff97-4d49-a81a-509f57566a7e\",\n        \"name\": \"20. Pembimbingan TA\",\n        \"orderIndex\": 16,\n        \"sheets\": [\n          {\n            \"id\": \"73171c76-b925-4088-bd35-60cb616e8980\",\n            \"name\": \"20. Pembimbingan TA\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"b772d9ad-21af-4c0e-bb11-b8869a446855\",\n        \"name\": \"21. EWMP\",\n        \"orderIndex\": 17,\n        \"sheets\": [\n          {\n            \"id\": \"70d7949e-1b2a-48f6-b758-503d7653d0b6\",\n            \"name\": \"21. EWMP\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"7ae0ff57-c7f6-42ad-9a6c-2cc76e42a9df\",\n        \"name\": \"22. Dosen Tidak Tetap\",\n        \"orderIndex\": 18,\n        \"sheets\": [\n          {\n            \"id\": \"f42b4f21-8a37-476d-9217-81a9a17d7d3d\",\n            \"name\": \"22. Dosen Tidak Tetap\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"8b13335e-2a9a-4a57-9f80-50fbf7b45ff9\",\n        \"name\": \"Dosen Industri-Praktisi\",\n        \"orderIndex\": 19,\n        \"sheets\": [\n          {\n            \"id\": \"4fc1c1af-f67c-498f-a365-de41a7958e47\",\n            \"name\": \"Dosen Industri-Praktisi\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"98dd8dfe-1c94-413a-8c8f-42f66f3697f7\",\n        \"name\": \"23. Rekognisi Dosen\",\n        \"orderIndex\": 20,\n        \"sheets\": [\n          {\n            \"id\": \"805b61ff-50ba-4a9f-8c0d-1c88485ae992\",\n            \"name\": \"23. Rekognisi Dosen\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"c5879ab2-f603-419d-a3fa-b6a5ab4f2068\",\n        \"name\": \"24,50,51. Penelitian Dosen-Mhs\",\n        \"orderIndex\": 21,\n        \"sheets\": [\n          {\n            \"id\": \"f02df63e-a86b-40e7-ac28-4ebd507f5ff5\",\n            \"name\": \"24,50,51. Penelitian Dosen-Mhs\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"4e8725d3-10fb-4264-a31a-2249972e8b11\",\n        \"name\": \"25,52,53. PkM Dosen-Mhs\",\n        \"orderIndex\": 22,\n        \"sheets\": [\n          {\n            \"id\": \"72a66cea-911d-4fc1-880d-f43ccc165377\",\n            \"name\": \"25,52,53. PkM Dosen-Mhs\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"fdf3890b-f9fb-476e-8351-356acc728c2b\",\n        \"name\": \"26&66. Publikasi Dosen-Mhs\",\n        \"orderIndex\": 23,\n        \"sheets\": [\n          {\n            \"id\": \"91d6799d-c32f-48d8-9b36-57d64fb3e9f3\",\n            \"name\": \"26&66. Publikasi Dosen-Mhs\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"7c7d0935-23c6-41ea-873a-ca930fb3ae11\",\n        \"name\": \"27. Sitasi Dosen\",\n        \"orderIndex\": 24,\n        \"sheets\": [\n          {\n            \"id\": \"d891090a-b6aa-455d-8513-aca882895fc3\",\n            \"name\": \"27. Sitasi Dosen\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"6a74e602-6fe7-4cb7-9890-57678ec58a15\",\n        \"name\": \"28&67. Luaran Dosen-Mahasiswa\",\n        \"orderIndex\": 25,\n        \"sheets\": [\n          {\n            \"id\": \"b82aec75-189c-4a40-967f-0d7ae87db477\",\n            \"name\": \"28&67. Luaran Dosen-Mahasiswa\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"b27c4517-eaf8-43b3-9215-49cccac72662\",\n        \"name\": \"29. Pengembangan Dosen\",\n        \"orderIndex\": 26,\n        \"sheets\": [\n          {\n            \"id\": \"1afd1518-44e1-40fb-8f6e-651c03014217\",\n            \"name\": \"29. Pengembangan Dosen\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"19ee7bf1-44fb-46f9-ade2-51bc09b96d19\",\n        \"name\": \"30. Tendik\",\n        \"orderIndex\": 27,\n        \"sheets\": [\n          {\n            \"id\": \"7efb5f5a-1a7d-442f-8bba-64fd44cd7430\",\n            \"name\": \"30. Tendik\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"36ef7a03-f32e-455d-a3d6-f75f9c4872af\",\n        \"name\": \"31, 32, 33. Keuangan\",\n        \"orderIndex\": 28,\n        \"sheets\": [\n          {\n            \"id\": \"a1a75f3a-b708-4734-8e3c-6ccb81c9be0b\",\n            \"name\": \"31, 32, 33. Keuangan\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"651d4315-e98e-430b-b239-06fec72458df\",\n        \"name\": \"34, 35. Reliasasi dan Kecukupan\",\n        \"orderIndex\": 29,\n        \"sheets\": [\n          {\n            \"id\": \"cddac3a5-892d-41da-b4b1-306d6b002f1a\",\n            \"name\": \"34, 35. Reliasasi dan Kecukupan\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"3a170eba-1842-44c2-9841-c9b7e3627fc4\",\n        \"name\": \"37. Kurikulum\",\n        \"orderIndex\": 30,\n        \"sheets\": [\n          {\n            \"id\": \"e69b9170-2c8b-421f-9805-347ca7af3248\",\n            \"name\": \"37. Kurikulum\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"d8f31086-9179-47ce-b7e5-77d1fe3897dc\",\n        \"name\": \"38. Karakteristik Pembelajaran\",\n        \"orderIndex\": 31,\n        \"sheets\": [\n          {\n            \"id\": \"cb9db593-5286-4e53-8e5f-e662cd525b0a\",\n            \"name\": \"38. Karakteristik Pembelajaran\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"45e1e0d6-c763-41bd-b53c-073ca5345ae6\",\n        \"name\": \"39. Rencana Proses Pembelajaran\",\n        \"orderIndex\": 32,\n        \"sheets\": [\n          {\n            \"id\": \"b3fd61ea-f528-4fe8-ac33-b708c4cfe046\",\n            \"name\": \"39. Rencana Proses Pembelajaran\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"154b6561-09cf-472e-99a3-7e3c9901aa28\",\n        \"name\": \"40. Pelaksanaan Pembelajaran\",\n        \"orderIndex\": 33,\n        \"sheets\": [\n          {\n            \"id\": \"fdad659b-eef0-42c6-9ff9-df9b4254a6be\",\n            \"name\": \"40. Pelaksanaan Pembelajaran\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"f153bbbc-25c6-419e-8324-7f4ab3fea326\",\n        \"name\": \"41. RPS Kurikulum\",\n        \"orderIndex\": 34,\n        \"sheets\": [\n          {\n            \"id\": \"7fd675d2-eb09-41a3-89ad-aa7b016f1879\",\n            \"name\": \"41. RPS Kurikulum\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"b89d4e10-eaa7-458e-91fc-bc22bd5f34a4\",\n        \"name\": \"42. Monev Proses Pembelajaran\",\n        \"orderIndex\": 35,\n        \"sheets\": [\n          {\n            \"id\": \"e2cdf446-89b9-46d7-9e0b-734bff6786bd\",\n            \"name\": \"42. Monev Proses Pembelajaran\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"5a3ca8ea-660a-45c4-9f13-bdfeb1cf6086\",\n        \"name\": \"43. Penilaian Pembelajaran\",\n        \"orderIndex\": 36,\n        \"sheets\": [\n          {\n            \"id\": \"29f06dfb-fe46-4d84-98d1-b7bcb318ee83\",\n            \"name\": \"43. Penilaian Pembelajaran\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"18ecc0af-ace6-424b-84d8-9a59522d2e27\",\n        \"name\": \"44. Basic Science\",\n        \"orderIndex\": 37,\n        \"sheets\": [\n          {\n            \"id\": \"0c91d8e7-8b94-412b-84e6-13d0c842c888\",\n            \"name\": \"44. Basic Science\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"52037dcc-e63a-4981-8858-ebbc5f1d9d4d\",\n        \"name\": \"45. MK Capstone Design\",\n        \"orderIndex\": 38,\n        \"sheets\": [\n          {\n            \"id\": \"0d40b179-12b9-46a3-ae45-ec55dc8f94a1\",\n            \"name\": \"45. MK Capstone Design\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"55b0b31e-2992-4364-aec9-979573fd7903\",\n        \"name\": \"Distribusi Pembimbing TA\",\n        \"orderIndex\": 39,\n        \"sheets\": [\n          {\n            \"id\": \"7ed50fa0-c7e9-441a-9cef-f9457659f8ba\",\n            \"name\": \"Distribusi Pembimbing TA\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"a562359d-18ab-47fd-adf0-6330cae78f43\",\n        \"name\": \"46. MBKM\",\n        \"orderIndex\": 40,\n        \"sheets\": [\n          {\n            \"id\": \"976a6ddd-36a5-42a5-87ff-c06e7cac41cc\",\n            \"name\": \"46. MBKM\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"b1304fa4-e278-4aa2-9799-cb819721f6e8\",\n        \"name\": \"46. Peserta MBKM\",\n        \"orderIndex\": 41,\n        \"sheets\": [\n          {\n            \"id\": \"0eced761-19c8-40b0-88c9-c01d81172a85\",\n            \"name\": \"46. Peserta MBKM\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"a4188d19-a8bf-4962-9660-8b9909a845a2\",\n        \"name\": \"47. Integrasi PenelitianPkMMK \",\n        \"orderIndex\": 42,\n        \"sheets\": [\n          {\n            \"id\": \"96707e91-2175-4420-97dd-fc9c2bd8df54\",\n            \"name\": \"47. Integrasi PenelitianPkMMK \"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"999ac4d0-5d3d-4a2a-a32d-eb905d9cf6eb\",\n        \"name\": \"48. Suasana Akademik\",\n        \"orderIndex\": 43,\n        \"sheets\": [\n          {\n            \"id\": \"cad868d8-7b84-48be-be76-68f2dc48d140\",\n            \"name\": \"48. Suasana Akademik\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"31a58ee5-a3ca-4a1d-921e-d03584f46b06\",\n        \"name\": \"49. Kepuasan Mahasiswa\",\n        \"orderIndex\": 44,\n        \"sheets\": [\n          {\n            \"id\": \"bf18f7f4-c1ec-481a-8dbb-daf8e2caa8d8\",\n            \"name\": \"49. Kepuasan Mahasiswa\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"bd7f0815-3d5b-4dcb-9d47-e6a8f5688156\",\n        \"name\": \"50&52 Roadmap Penelitian - PkM\",\n        \"orderIndex\": 45,\n        \"sheets\": [\n          {\n            \"id\": \"67bd4ef7-f86b-41de-9f96-bfb461fd873c\",\n            \"name\": \"50&52 Roadmap Penelitian - PkM\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"a1f44d30-73f0-47bf-aea1-c71cc3f850e9\",\n        \"name\": \"55. IPK Mahasiswa\",\n        \"orderIndex\": 46,\n        \"sheets\": [\n          {\n            \"id\": \"e017a564-a9ea-4377-912f-a21ea49a3bf7\",\n            \"name\": \"55. IPK Mahasiswa\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"990163a8-5d06-4b92-a629-b60c1f394fe1\",\n        \"name\": \"56. Prestasi Akademik Mahasiswa\",\n        \"orderIndex\": 47,\n        \"sheets\": [\n          {\n            \"id\": \"2280212b-0bff-4e1d-a2a0-549e783930d0\",\n            \"name\": \"56. Prestasi Akademik Mahasiswa\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"4784d789-10b8-48b2-bce8-894db57f659d\",\n        \"name\": \"57. Prestasi Non-Akademik Mhs\",\n        \"orderIndex\": 48,\n        \"sheets\": [\n          {\n            \"id\": \"7feb0249-70bd-425b-b4f6-763840e9fd71\",\n            \"name\": \"57. Prestasi Non-Akademik Mhs\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"901553c0-33ec-4bf8-8fc3-35d96d5ccee7\",\n        \"name\": \"58, 59, 60. Masa Studi Lulusan\",\n        \"orderIndex\": 49,\n        \"sheets\": [\n          {\n            \"id\": \"9bf58bf7-0091-4c1a-bad0-1568b92f3be0\",\n            \"name\": \"58, 59, 60. Masa Studi Lulusan\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"e035bdb1-3226-4df0-a911-bb83b4b8a662\",\n        \"name\": \"61. Tracer Study\",\n        \"orderIndex\": 50,\n        \"sheets\": [\n          {\n            \"id\": \"a592a19e-0c03-4dc9-b1be-65468905068c\",\n            \"name\": \"61. Tracer Study\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"2541e8f1-aa28-4096-af8d-e45d100c11d0\",\n        \"name\": \"62. Waktu Tunggu Lulusan\",\n        \"orderIndex\": 51,\n        \"sheets\": [\n          {\n            \"id\": \"ad12fe94-d8a2-4496-ab2d-749621dd9673\",\n            \"name\": \"62. Waktu Tunggu Lulusan\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"4d08320c-023a-4454-a00b-920df60b62dc\",\n        \"name\": \"63. Kesesuaian Bidang Kerja\",\n        \"orderIndex\": 52,\n        \"sheets\": [\n          {\n            \"id\": \"c310af89-3147-42cb-b2ad-22ce1718efc7\",\n            \"name\": \"63. Kesesuaian Bidang Kerja\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"ef7c646e-63b8-4fcc-b3e4-0d0241a3c3a0\",\n        \"name\": \"64. Tempat Kerja Lulusan\",\n        \"orderIndex\": 53,\n        \"sheets\": [\n          {\n            \"id\": \"07951e3d-39d8-4af5-b837-87f1ad5c8176\",\n            \"name\": \"64. Tempat Kerja Lulusan\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"fdd9af63-ec47-4508-ba10-141846d608ba\",\n        \"name\": \"65. Kepuasan Pengguna\",\n        \"orderIndex\": 54,\n        \"sheets\": [\n          {\n            \"id\": \"654142e0-ff1b-4bc9-b8b3-691c9fe13a28\",\n            \"name\": \"65. Kepuasan Pengguna\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"70063b61-671a-4a69-96f7-510b31764cbd\",\n        \"name\": \"68. Penjaminan Mutu\",\n        \"orderIndex\": 55,\n        \"sheets\": [\n          {\n            \"id\": \"ae04db16-c80b-405a-863b-6dff3e85b928\",\n            \"name\": \"68. Penjaminan Mutu\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"52194a0f-3a72-44da-99d3-e2cea8474518\",\n        \"name\": \"69. Dokumen SPMI\",\n        \"orderIndex\": 56,\n        \"sheets\": [\n          {\n            \"id\": \"eaaf18c6-b46a-4afd-bb86-95e43cde15a4\",\n            \"name\": \"69. Dokumen SPMI\"\n          }\n        ],\n        \"children\": []\n      },\n      {\n        \"id\": \"46f6cc19-c1bb-4a28-8d4f-82c41095dae1\",\n        \"name\": \"71. Survey Kepuasan Stakeholder\",\n        \"orderIndex\": 57,\n        \"sheets\": [\n          {\n            \"id\": \"c5d09225-ca53-47fe-a6fb-09db90327700\",\n            \"name\": \"71. Survey Kepuasan Stakeholder\"\n          }\n        ],\n        \"children\": []\n      }\n    ]\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Menu path",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/menus/00000000-0000-0000-0001-000000000001/path",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "menus",
+                "00000000-0000-0000-0001-000000000001",
+                "path"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/menus/00000000-0000-0000-0001-000000000001/path",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "menus",
+                    "00000000-0000-0000-0001-000000000001",
+                    "path"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": \"00000000-0000-0000-0001-000000000001\",\n    \"name\": \"Kriteria\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Create menu (temp, admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/menus",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "menus"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"_doc-capture-temp\",\n  \"parentId\": \"00000000-0000-0000-0001-000000000001\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "201 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/menus",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "menus"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"_doc-capture-temp\",\n  \"parentId\": \"00000000-0000-0000-0001-000000000001\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"83b2a7ef-f0e0-46d1-8fe6-4467ce62edf4\",\n  \"name\": \"_doc-capture-temp\",\n  \"orderIndex\": 3,\n  \"parentId\": \"00000000-0000-0000-0001-000000000001\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update menu (temp, admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/menus/83b2a7ef-f0e0-46d1-8fe6-4467ce62edf4",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "menus",
+                "83b2a7ef-f0e0-46d1-8fe6-4467ce62edf4"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"_doc-capture-temp-renamed\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 response",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/menus/83b2a7ef-f0e0-46d1-8fe6-4467ce62edf4",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "menus",
+                    "83b2a7ef-f0e0-46d1-8fe6-4467ce62edf4"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"_doc-capture-temp-renamed\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"83b2a7ef-f0e0-46d1-8fe6-4467ce62edf4\",\n  \"name\": \"_doc-capture-temp-renamed\",\n  \"orderIndex\": 3,\n  \"parentId\": \"00000000-0000-0000-0001-000000000001\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create menu (kaprodi, forbidden)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/menus",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "menus"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"nope\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "403 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/menus",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "menus"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"nope\"\n}"
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Forbidden\",\n  \"statusCode\": 403\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Sheets",
+      "item": [
+        {
+          "name": "Sheet metadata (DTPS)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sheets/00000000-0000-0000-0002-000000000001",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sheets",
+                "00000000-0000-0000-0002-000000000001"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/sheets/00000000-0000-0000-0002-000000000001",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "sheets",
+                    "00000000-0000-0000-0002-000000000001"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"00000000-0000-0000-0002-000000000001\",\n  \"name\": \"DTPS\",\n  \"orderIndex\": 0,\n  \"isReadOnly\": false,\n  \"menuItem\": {\n    \"id\": \"00000000-0000-0000-0001-000000000002\",\n    \"name\": \"DTPS\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Sheet not found",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sheets/00000000-0000-0000-0000-000000000000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sheets",
+                "00000000-0000-0000-0000-000000000000"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "404 response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/sheets/00000000-0000-0000-0000-000000000000",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "sheets",
+                    "00000000-0000-0000-0000-000000000000"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Sheet tidak ditemukan\",\n  \"error\": \"Not Found\",\n  \"statusCode\": 404\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create sheet (temp, admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/sheets",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sheets"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"menuItemId\": \"83b2a7ef-f0e0-46d1-8fe6-4467ce62edf4\",\n  \"name\": \"_doc-capture-sheet\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "201 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/sheets",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "sheets"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"menuItemId\": \"83b2a7ef-f0e0-46d1-8fe6-4467ce62edf4\",\n  \"name\": \"_doc-capture-sheet\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"24cee834-2ad6-434e-9be7-60b31fa916de\",\n  \"name\": \"_doc-capture-sheet\",\n  \"menuItemId\": \"83b2a7ef-f0e0-46d1-8fe6-4467ce62edf4\",\n  \"isReadOnly\": false,\n  \"orderIndex\": 1\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create sheet (kaprodi, forbidden)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/sheets",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sheets"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"menuItemId\": \"83b2a7ef-f0e0-46d1-8fe6-4467ce62edf4\",\n  \"name\": \"nope\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "403 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/sheets",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "sheets"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"menuItemId\": \"83b2a7ef-f0e0-46d1-8fe6-4467ce62edf4\",\n  \"name\": \"nope\"\n}"
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Forbidden\",\n  \"statusCode\": 403\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Columns",
+      "item": [
+        {
+          "name": "Sheet columns (DTPS)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sheets/00000000-0000-0000-0002-000000000001/columns",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sheets",
+                "00000000-0000-0000-0002-000000000001",
+                "columns"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/sheets/00000000-0000-0000-0002-000000000001/columns",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "sheets",
+                    "00000000-0000-0000-0002-000000000001",
+                    "columns"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": \"00000000-0000-0000-0003-000000000001\",\n    \"name\": \"No.\",\n    \"type\": \"INTEGER\",\n    \"orderIndex\": 1,\n    \"children\": []\n  },\n  {\n    \"id\": \"00000000-0000-0000-0003-000000000002\",\n    \"name\": \"Nama Dosen\",\n    \"type\": \"TEXT\",\n    \"orderIndex\": 2,\n    \"children\": []\n  },\n  {\n    \"id\": \"00000000-0000-0000-0003-000000000003\",\n    \"name\": \"Kualifikasi Akademik\",\n    \"type\": \"TEXT\",\n    \"orderIndex\": 3,\n    \"children\": [\n      {\n        \"id\": \"00000000-0000-0000-0003-000000000004\",\n        \"name\": \"Magister\",\n        \"type\": \"TEXT\",\n        \"orderIndex\": 1,\n        \"children\": []\n      },\n      {\n        \"id\": \"00000000-0000-0000-0003-000000000005\",\n        \"name\": \"Doktor\",\n        \"type\": \"TEXT\",\n        \"orderIndex\": 2,\n        \"children\": []\n      }\n    ]\n  },\n  {\n    \"id\": \"00000000-0000-0000-0003-000000000006\",\n    \"name\": \"Jabatan Akademik\",\n    \"type\": \"TEXT\",\n    \"orderIndex\": 4,\n    \"children\": []\n  },\n  {\n    \"id\": \"00000000-0000-0000-0003-000000000007\",\n    \"name\": \"NIDN\",\n    \"type\": \"TEXT\",\n    \"orderIndex\": 5,\n    \"children\": []\n  },\n  {\n    \"id\": \"00000000-0000-0000-0003-000000000008\",\n    \"name\": \"Link Dokumen\",\n    \"type\": \"URL\",\n    \"orderIndex\": 6,\n    \"children\": []\n  },\n  {\n    \"id\": \"f665b0e2-a0b3-4c56-9585-ce9265a60cdf\",\n    \"name\": \"Test\",\n    \"type\": \"TEXT\",\n    \"orderIndex\": 7,\n    \"children\": []\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Column values (DTPS)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sheets/00000000-0000-0000-0002-000000000001/columns/00000000-0000-0000-0003-000000000001/values",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sheets",
+                "00000000-0000-0000-0002-000000000001",
+                "columns",
+                "00000000-0000-0000-0003-000000000001",
+                "values"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/sheets/00000000-0000-0000-0002-000000000001/columns/00000000-0000-0000-0003-000000000001/values",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "sheets",
+                    "00000000-0000-0000-0002-000000000001",
+                    "columns",
+                    "00000000-0000-0000-0003-000000000001",
+                    "values"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"values\": [\n    \"1\",\n    \"2\",\n    \"3\"\n  ],\n  \"total\": 3\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create column (temp, admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/sheets/d5ac6098-0881-48f2-b4c9-5fcfc264bdcf/columns",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sheets",
+                "d5ac6098-0881-48f2-b4c9-5fcfc264bdcf",
+                "columns"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"_doc-capture-col\",\n  \"type\": \"INTEGER\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "201 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/sheets/d5ac6098-0881-48f2-b4c9-5fcfc264bdcf/columns",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "sheets",
+                    "d5ac6098-0881-48f2-b4c9-5fcfc264bdcf",
+                    "columns"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"_doc-capture-col\",\n  \"type\": \"INTEGER\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"1c6ad45a-4627-40fe-b3d7-feb88d40eb56\",\n  \"sheetId\": \"d5ac6098-0881-48f2-b4c9-5fcfc264bdcf\",\n  \"name\": \"_doc-capture-col\",\n  \"type\": \"INTEGER\",\n  \"orderIndex\": 3,\n  \"parentColumnId\": null,\n  \"formulaOp\": null,\n  \"formulaOperandIds\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update column (temp, admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/columns/0e7154bf-e08a-4a36-b26b-b866216354ac",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "columns",
+                "0e7154bf-e08a-4a36-b26b-b866216354ac"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"_doc-capture-col-renamed\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 response",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/columns/0e7154bf-e08a-4a36-b26b-b866216354ac",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "columns",
+                    "0e7154bf-e08a-4a36-b26b-b866216354ac"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"_doc-capture-col-renamed\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"0e7154bf-e08a-4a36-b26b-b866216354ac\",\n  \"sheetId\": \"d5ac6098-0881-48f2-b4c9-5fcfc264bdcf\",\n  \"name\": \"_doc-capture-col-renamed\",\n  \"type\": \"INTEGER\",\n  \"orderIndex\": 3,\n  \"parentColumnId\": null,\n  \"formulaOp\": null,\n  \"formulaOperandIds\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete column (temp, admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/columns/1c6ad45a-4627-40fe-b3d7-feb88d40eb56",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "columns",
+                "1c6ad45a-4627-40fe-b3d7-feb88d40eb56"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 response",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/columns/1c6ad45a-4627-40fe-b3d7-feb88d40eb56",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "columns",
+                    "1c6ad45a-4627-40fe-b3d7-feb88d40eb56"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"deleted\": true,\n  \"columnId\": \"1c6ad45a-4627-40fe-b3d7-feb88d40eb56\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Sheets - Rows",
+      "item": [
+        {
+          "name": "Sheet rows (DTPS)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sheets/00000000-0000-0000-0002-000000000001/rows",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sheets",
+                "00000000-0000-0000-0002-000000000001",
+                "rows"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "500 response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/sheets/00000000-0000-0000-0002-000000000001/rows",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "sheets",
+                    "00000000-0000-0000-0002-000000000001",
+                    "rows"
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 500,\n  \"message\": \"Internal server error\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create row (temp, admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/sheets/d5ac6098-0881-48f2-b4c9-5fcfc264bdcf/rows",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sheets",
+                "d5ac6098-0881-48f2-b4c9-5fcfc264bdcf",
+                "rows"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cells\": [\n    {\n      \"columnId\": \"1c6ad45a-4627-40fe-b3d7-feb88d40eb56\",\n      \"value\": \"42\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "201 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/sheets/d5ac6098-0881-48f2-b4c9-5fcfc264bdcf/rows",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "sheets",
+                    "d5ac6098-0881-48f2-b4c9-5fcfc264bdcf",
+                    "rows"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cells\": [\n    {\n      \"columnId\": \"1c6ad45a-4627-40fe-b3d7-feb88d40eb56\",\n      \"value\": \"42\"\n    }\n  ]\n}"
+                }
+              },
+              "status": "OK",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"rowId\": \"dd2554b6-4216-438d-a007-43f543a70eef\",\n  \"orderIndex\": 3,\n  \"cells\": {\n    \"1785dbe6-1f69-4063-9d52-dd357681288d\": null,\n    \"6d267879-756b-4b7b-85a9-778936173ca8\": null,\n    \"1c6ad45a-4627-40fe-b3d7-feb88d40eb56\": \"42\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create row (kaprodi, forbidden)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/sheets/d5ac6098-0881-48f2-b4c9-5fcfc264bdcf/rows",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sheets",
+                "d5ac6098-0881-48f2-b4c9-5fcfc264bdcf",
+                "rows"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cells\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "403 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/sheets/d5ac6098-0881-48f2-b4c9-5fcfc264bdcf/rows",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "sheets",
+                    "d5ac6098-0881-48f2-b4c9-5fcfc264bdcf",
+                    "rows"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cells\": []\n}"
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Forbidden\",\n  \"statusCode\": 403\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update row (temp, admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/sheets/d5ac6098-0881-48f2-b4c9-5fcfc264bdcf/rows/dd2554b6-4216-438d-a007-43f543a70eef",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sheets",
+                "d5ac6098-0881-48f2-b4c9-5fcfc264bdcf",
+                "rows",
+                "dd2554b6-4216-438d-a007-43f543a70eef"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cells\": [\n    {\n      \"columnId\": \"1c6ad45a-4627-40fe-b3d7-feb88d40eb56\",\n      \"value\": \"99\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 response",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/sheets/d5ac6098-0881-48f2-b4c9-5fcfc264bdcf/rows/dd2554b6-4216-438d-a007-43f543a70eef",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "sheets",
+                    "d5ac6098-0881-48f2-b4c9-5fcfc264bdcf",
+                    "rows",
+                    "dd2554b6-4216-438d-a007-43f543a70eef"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cells\": [\n    {\n      \"columnId\": \"1c6ad45a-4627-40fe-b3d7-feb88d40eb56\",\n      \"value\": \"99\"\n    }\n  ]\n}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"rowId\": \"dd2554b6-4216-438d-a007-43f543a70eef\",\n  \"orderIndex\": 3,\n  \"cells\": {\n    \"1785dbe6-1f69-4063-9d52-dd357681288d\": null,\n    \"6d267879-756b-4b7b-85a9-778936173ca8\": null,\n    \"1c6ad45a-4627-40fe-b3d7-feb88d40eb56\": \"99\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete row (temp, admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sheets/d5ac6098-0881-48f2-b4c9-5fcfc264bdcf/rows/dd2554b6-4216-438d-a007-43f543a70eef",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sheets",
+                "d5ac6098-0881-48f2-b4c9-5fcfc264bdcf",
+                "rows",
+                "dd2554b6-4216-438d-a007-43f543a70eef"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 response",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/sheets/d5ac6098-0881-48f2-b4c9-5fcfc264bdcf/rows/dd2554b6-4216-438d-a007-43f543a70eef",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "sheets",
+                    "d5ac6098-0881-48f2-b4c9-5fcfc264bdcf",
+                    "rows",
+                    "dd2554b6-4216-438d-a007-43f543a70eef"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"deleted\": true,\n  \"rowId\": \"dd2554b6-4216-438d-a007-43f543a70eef\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete row (kaprodi, forbidden)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sheets/d5ac6098-0881-48f2-b4c9-5fcfc264bdcf/rows/dd2554b6-4216-438d-a007-43f543a70eef",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sheets",
+                "d5ac6098-0881-48f2-b4c9-5fcfc264bdcf",
+                "rows",
+                "dd2554b6-4216-438d-a007-43f543a70eef"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "403 response",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/sheets/d5ac6098-0881-48f2-b4c9-5fcfc264bdcf/rows/dd2554b6-4216-438d-a007-43f543a70eef",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "sheets",
+                    "d5ac6098-0881-48f2-b4c9-5fcfc264bdcf",
+                    "rows",
+                    "dd2554b6-4216-438d-a007-43f543a70eef"
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Forbidden\",\n  \"statusCode\": 403\n}"
+            }
+          ]
+        },
+        {
+          "name": "Sheet rows (DTPS, retry after migration)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sheets/00000000-0000-0000-0002-000000000001/rows",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sheets",
+                "00000000-0000-0000-0002-000000000001",
+                "rows"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/sheets/00000000-0000-0000-0002-000000000001/rows",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "sheets",
+                    "00000000-0000-0000-0002-000000000001",
+                    "rows"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"rows\": [\n    {\n      \"rowId\": \"00000000-0000-0000-0004-000000000001\",\n      \"orderIndex\": 1,\n      \"cells\": {\n        \"00000000-0000-0000-0003-000000000002\": \"Dr. Andi Susanto, M.T., Ph.D.\",\n        \"00000000-0000-0000-0003-000000000003\": null,\n        \"00000000-0000-0000-0003-000000000004\": \"Teknik Informatika\",\n        \"00000000-0000-0000-0003-000000000005\": \"Computer Science\",\n        \"00000000-0000-0000-0003-000000000006\": \"Profesor\",\n        \"00000000-0000-0000-0003-000000000007\": \"0017026012\",\n        \"00000000-0000-0000-0003-000000000008\": \"https://drive.google.com/file/d/abc/view\",\n        \"00000000-0000-0000-0003-000000000001\": \"1\",\n        \"f665b0e2-a0b3-4c56-9585-ce9265a60cdf\": null\n      }\n    },\n    {\n      \"rowId\": \"00000000-0000-0000-0004-000000000002\",\n      \"orderIndex\": 2,\n      \"cells\": {\n        \"00000000-0000-0000-0003-000000000002\": \"Dr. Budi Santoso, M.Kom.\",\n        \"00000000-0000-0000-0003-000000000003\": null,\n        \"00000000-0000-0000-0003-000000000004\": \"Ilmu Komputer\",\n        \"00000000-0000-0000-0003-000000000005\": null,\n        \"00000000-0000-0000-0003-000000000006\": \"Lektor Kepala\",\n        \"00000000-0000-0000-0003-000000000007\": \"0023051978\",\n        \"00000000-0000-0000-0003-000000000008\": \"https://drive.google.com/file/d/def/view\",\n        \"00000000-0000-0000-0003-000000000001\": \"2\",\n        \"f665b0e2-a0b3-4c56-9585-ce9265a60cdf\": null\n      }\n    },\n    {\n      \"rowId\": \"00000000-0000-0000-0004-000000000003\",\n      \"orderIndex\": 3,\n      \"cells\": {\n        \"00000000-0000-0000-0003-000000000002\": \"Ir. Citra Dewi, M.T.\",\n        \"00000000-0000-0000-0003-000000000003\": null,\n        \"00000000-0000-0000-0003-000000000004\": \"Teknik Elektro\",\n        \"00000000-0000-0000-0003-000000000005\": null,\n        \"00000000-0000-0000-0003-000000000006\": \"Lektor\",\n        \"00000000-0000-0000-0003-000000000007\": \"0011081985\",\n        \"00000000-0000-0000-0003-000000000008\": null,\n        \"00000000-0000-0000-0003-000000000001\": \"3\",\n        \"f665b0e2-a0b3-4c56-9585-ce9265a60cdf\": null\n      }\n    }\n  ],\n  \"total\": 3,\n  \"limit\": 50,\n  \"offset\": 0,\n  \"aggregates\": []\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Aggregates",
+      "item": [
+        {
+          "name": "Create aggregate SUM (temp, admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/sheets/d5ac6098-0881-48f2-b4c9-5fcfc264bdcf/aggregates",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sheets",
+                "d5ac6098-0881-48f2-b4c9-5fcfc264bdcf",
+                "aggregates"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"targetColumnId\": \"1c6ad45a-4627-40fe-b3d7-feb88d40eb56\",\n  \"op\": \"SUM\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "201 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/sheets/d5ac6098-0881-48f2-b4c9-5fcfc264bdcf/aggregates",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "sheets",
+                    "d5ac6098-0881-48f2-b4c9-5fcfc264bdcf",
+                    "aggregates"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"targetColumnId\": \"1c6ad45a-4627-40fe-b3d7-feb88d40eb56\",\n  \"op\": \"SUM\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"52e9b3bd-3c1a-42cf-aade-ef7b8f7e253c\",\n  \"sheetId\": \"d5ac6098-0881-48f2-b4c9-5fcfc264bdcf\",\n  \"targetColumnId\": \"1c6ad45a-4627-40fe-b3d7-feb88d40eb56\",\n  \"op\": \"SUM\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "List aggregates",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sheets/d5ac6098-0881-48f2-b4c9-5fcfc264bdcf/aggregates",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sheets",
+                "d5ac6098-0881-48f2-b4c9-5fcfc264bdcf",
+                "aggregates"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/sheets/d5ac6098-0881-48f2-b4c9-5fcfc264bdcf/aggregates",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "sheets",
+                    "d5ac6098-0881-48f2-b4c9-5fcfc264bdcf",
+                    "aggregates"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"aggregates\": [\n    {\n      \"id\": \"52e9b3bd-3c1a-42cf-aade-ef7b8f7e253c\",\n      \"columnId\": \"1c6ad45a-4627-40fe-b3d7-feb88d40eb56\",\n      \"op\": \"SUM\",\n      \"value\": \"99\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create aggregate duplicate (conflict)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/sheets/d5ac6098-0881-48f2-b4c9-5fcfc264bdcf/aggregates",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sheets",
+                "d5ac6098-0881-48f2-b4c9-5fcfc264bdcf",
+                "aggregates"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"targetColumnId\": \"1c6ad45a-4627-40fe-b3d7-feb88d40eb56\",\n  \"op\": \"SUM\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "409 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/sheets/d5ac6098-0881-48f2-b4c9-5fcfc264bdcf/aggregates",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "sheets",
+                    "d5ac6098-0881-48f2-b4c9-5fcfc264bdcf",
+                    "aggregates"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"targetColumnId\": \"1c6ad45a-4627-40fe-b3d7-feb88d40eb56\",\n  \"op\": \"SUM\"\n}"
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Agregat SUM untuk kolom ini sudah ada.\",\n  \"error\": \"Conflict\",\n  \"statusCode\": 409\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete aggregate (admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sheets/d5ac6098-0881-48f2-b4c9-5fcfc264bdcf/aggregates/52e9b3bd-3c1a-42cf-aade-ef7b8f7e253c",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sheets",
+                "d5ac6098-0881-48f2-b4c9-5fcfc264bdcf",
+                "aggregates",
+                "52e9b3bd-3c1a-42cf-aade-ef7b8f7e253c"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 response",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/sheets/d5ac6098-0881-48f2-b4c9-5fcfc264bdcf/aggregates/52e9b3bd-3c1a-42cf-aade-ef7b8f7e253c",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "sheets",
+                    "d5ac6098-0881-48f2-b4c9-5fcfc264bdcf",
+                    "aggregates",
+                    "52e9b3bd-3c1a-42cf-aade-ef7b8f7e253c"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"deleted\": true,\n  \"aggregateId\": \"52e9b3bd-3c1a-42cf-aade-ef7b8f7e253c\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Imports",
+      "item": [
+        {
+          "name": "Import xlsx (temp, admin)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/imports",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "imports"
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "parentMenuId",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "201 response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/imports",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "imports"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"importId\": \"02204907-af8f-4d2a-b2a2-9d2bc964bb40\",\n  \"workbookMenuId\": \"2dd1a1f2-2649-4926-8786-55ca541e5a41\",\n  \"sheets\": [\n    {\n      \"sheetId\": \"6e9c49dd-f718-4084-b354-b867d1fd718a\",\n      \"name\": \"Formula Test\",\n      \"isReadOnly\": true\n    }\n  ]\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
