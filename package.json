@@ -79,15 +79,6 @@
     "url": "https://github.com/alafajar/arsip-backend/issues"
   },
   "homepage": "https://github.com/alafajar/arsip-backend#readme",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@nestjs/core",
-      "@prisma/engines",
-      "prisma",
-      "unrs-resolver",
-      "bcrypt"
-    ]
-  },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
   }
