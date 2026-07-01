@@ -1,0 +1,292 @@
+{
+  "meta": {
+    "sheetId": "7a0ec8fb-390f-44d3-a155-26ce89f4ca56",
+    "statusColId": "b889aebd-378d-4265-b3e0-8303de8c025f"
+  },
+  "results": [
+    {
+      "name": "Create column Status (TEXT)",
+      "method": "POST",
+      "url": "/sheets/7a0ec8fb-390f-44d3-a155-26ce89f4ca56/columns",
+      "requestBody": {
+        "name": "Status",
+        "type": "TEXT"
+      },
+      "status": 201,
+      "response": {
+        "id": "b889aebd-378d-4265-b3e0-8303de8c025f",
+        "sheetId": "7a0ec8fb-390f-44d3-a155-26ce89f4ca56",
+        "name": "Status",
+        "type": "TEXT",
+        "orderIndex": 5,
+        "parentColumnId": null,
+        "formulaOp": null,
+        "formulaOperandIds": []
+      }
+    },
+    {
+      "name": "Patch row 1 Status=Aktif",
+      "method": "PATCH",
+      "url": "/sheets/7a0ec8fb-390f-44d3-a155-26ce89f4ca56/rows/4856c5a6-6d99-4077-bdeb-458032604d06",
+      "requestBody": {
+        "cells": [
+          {
+            "columnId": "b889aebd-378d-4265-b3e0-8303de8c025f",
+            "value": "Aktif"
+          }
+        ]
+      },
+      "status": 200,
+      "response": {
+        "rowId": "4856c5a6-6d99-4077-bdeb-458032604d06",
+        "orderIndex": 1,
+        "cells": {
+          "25bf9a7f-0e1a-43da-a1ea-74b963475313": "10",
+          "a3ddb580-c30f-4dfc-a2ac-c299364729f8": "5",
+          "097adac1-547d-449a-854c-7085ed7eedb6": null,
+          "f3824476-4e21-40c6-bf36-f508a209ee36": "Alpha",
+          "b889aebd-378d-4265-b3e0-8303de8c025f": "Aktif"
+        }
+      }
+    },
+    {
+      "name": "Patch row 2 Status=Aktif",
+      "method": "PATCH",
+      "url": "/sheets/7a0ec8fb-390f-44d3-a155-26ce89f4ca56/rows/fdac9677-8c60-409d-88b2-392d7bbced2d",
+      "requestBody": {
+        "cells": [
+          {
+            "columnId": "b889aebd-378d-4265-b3e0-8303de8c025f",
+            "value": "Aktif"
+          }
+        ]
+      },
+      "status": 200,
+      "response": {
+        "rowId": "fdac9677-8c60-409d-88b2-392d7bbced2d",
+        "orderIndex": 2,
+        "cells": {
+          "25bf9a7f-0e1a-43da-a1ea-74b963475313": "20",
+          "a3ddb580-c30f-4dfc-a2ac-c299364729f8": "3",
+          "097adac1-547d-449a-854c-7085ed7eedb6": null,
+          "f3824476-4e21-40c6-bf36-f508a209ee36": "Beta",
+          "b889aebd-378d-4265-b3e0-8303de8c025f": "Aktif"
+        }
+      }
+    },
+    {
+      "name": "Patch row 3 Status=Nonaktif",
+      "method": "PATCH",
+      "url": "/sheets/7a0ec8fb-390f-44d3-a155-26ce89f4ca56/rows/8f0c92b8-5db4-4ddd-864f-6cc8fb5bf11e",
+      "requestBody": {
+        "cells": [
+          {
+            "columnId": "b889aebd-378d-4265-b3e0-8303de8c025f",
+            "value": "Nonaktif"
+          }
+        ]
+      },
+      "status": 200,
+      "response": {
+        "rowId": "8f0c92b8-5db4-4ddd-864f-6cc8fb5bf11e",
+        "orderIndex": 3,
+        "cells": {
+          "25bf9a7f-0e1a-43da-a1ea-74b963475313": "7",
+          "a3ddb580-c30f-4dfc-a2ac-c299364729f8": "8",
+          "097adac1-547d-449a-854c-7085ed7eedb6": null,
+          "f3824476-4e21-40c6-bf36-f508a209ee36": "Alpha",
+          "b889aebd-378d-4265-b3e0-8303de8c025f": "Nonaktif"
+        }
+      }
+    },
+    {
+      "name": "Patch row 4 Status=Aktif",
+      "method": "PATCH",
+      "url": "/sheets/7a0ec8fb-390f-44d3-a155-26ce89f4ca56/rows/583b7a14-ba8c-4cae-9b22-c3f29006cff2",
+      "requestBody": {
+        "cells": [
+          {
+            "columnId": "b889aebd-378d-4265-b3e0-8303de8c025f",
+            "value": "Aktif"
+          }
+        ]
+      },
+      "status": 200,
+      "response": {
+        "rowId": "583b7a14-ba8c-4cae-9b22-c3f29006cff2",
+        "orderIndex": 4,
+        "cells": {
+          "25bf9a7f-0e1a-43da-a1ea-74b963475313": "1",
+          "a3ddb580-c30f-4dfc-a2ac-c299364729f8": "1",
+          "097adac1-547d-449a-854c-7085ed7eedb6": null,
+          "f3824476-4e21-40c6-bf36-f508a209ee36": "Gamma",
+          "b889aebd-378d-4265-b3e0-8303de8c025f": "Aktif"
+        }
+      }
+    },
+    {
+      "name": "CAPTURE: rows after adding Status (no filter)",
+      "method": "GET",
+      "url": "/sheets/7a0ec8fb-390f-44d3-a155-26ce89f4ca56/rows",
+      "requestBody": null,
+      "status": 200,
+      "response": {
+        "rows": [
+          {
+            "rowId": "4856c5a6-6d99-4077-bdeb-458032604d06",
+            "orderIndex": 1,
+            "cells": {
+              "25bf9a7f-0e1a-43da-a1ea-74b963475313": "10",
+              "a3ddb580-c30f-4dfc-a2ac-c299364729f8": "5",
+              "097adac1-547d-449a-854c-7085ed7eedb6": "15",
+              "f3824476-4e21-40c6-bf36-f508a209ee36": "Alpha",
+              "b889aebd-378d-4265-b3e0-8303de8c025f": "Aktif"
+            }
+          },
+          {
+            "rowId": "fdac9677-8c60-409d-88b2-392d7bbced2d",
+            "orderIndex": 2,
+            "cells": {
+              "25bf9a7f-0e1a-43da-a1ea-74b963475313": "20",
+              "a3ddb580-c30f-4dfc-a2ac-c299364729f8": "3",
+              "097adac1-547d-449a-854c-7085ed7eedb6": "23",
+              "f3824476-4e21-40c6-bf36-f508a209ee36": "Beta",
+              "b889aebd-378d-4265-b3e0-8303de8c025f": "Aktif"
+            }
+          },
+          {
+            "rowId": "8f0c92b8-5db4-4ddd-864f-6cc8fb5bf11e",
+            "orderIndex": 3,
+            "cells": {
+              "25bf9a7f-0e1a-43da-a1ea-74b963475313": "7",
+              "a3ddb580-c30f-4dfc-a2ac-c299364729f8": "8",
+              "097adac1-547d-449a-854c-7085ed7eedb6": "15",
+              "f3824476-4e21-40c6-bf36-f508a209ee36": "Alpha",
+              "b889aebd-378d-4265-b3e0-8303de8c025f": "Nonaktif"
+            }
+          },
+          {
+            "rowId": "583b7a14-ba8c-4cae-9b22-c3f29006cff2",
+            "orderIndex": 4,
+            "cells": {
+              "25bf9a7f-0e1a-43da-a1ea-74b963475313": "1",
+              "a3ddb580-c30f-4dfc-a2ac-c299364729f8": "1",
+              "097adac1-547d-449a-854c-7085ed7eedb6": "2",
+              "f3824476-4e21-40c6-bf36-f508a209ee36": "Gamma",
+              "b889aebd-378d-4265-b3e0-8303de8c025f": "Aktif"
+            }
+          }
+        ],
+        "total": 4,
+        "limit": 50,
+        "offset": 0,
+        "aggregates": [
+          {
+            "id": "7fe7c30d-3539-4b7f-b30c-eed680005a7c",
+            "columnId": "25bf9a7f-0e1a-43da-a1ea-74b963475313",
+            "op": "SUM",
+            "value": "38"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CAPTURE: AND — Kategori=Alpha AND Status=Aktif (expect total=1, row1 only)",
+      "method": "GET",
+      "url": "/sheets/7a0ec8fb-390f-44d3-a155-26ce89f4ca56/rows?filter%5Bf3824476-4e21-40c6-bf36-f508a209ee36%5D%5B%5D=Alpha&filter%5Bb889aebd-378d-4265-b3e0-8303de8c025f%5D%5B%5D=Aktif",
+      "requestBody": null,
+      "status": 200,
+      "response": {
+        "rows": [
+          {
+            "rowId": "4856c5a6-6d99-4077-bdeb-458032604d06",
+            "orderIndex": 1,
+            "cells": {
+              "25bf9a7f-0e1a-43da-a1ea-74b963475313": "10",
+              "a3ddb580-c30f-4dfc-a2ac-c299364729f8": "5",
+              "097adac1-547d-449a-854c-7085ed7eedb6": "15",
+              "f3824476-4e21-40c6-bf36-f508a209ee36": "Alpha",
+              "b889aebd-378d-4265-b3e0-8303de8c025f": "Aktif"
+            }
+          }
+        ],
+        "total": 1,
+        "limit": 50,
+        "offset": 0,
+        "aggregates": [
+          {
+            "id": "7fe7c30d-3539-4b7f-b30c-eed680005a7c",
+            "columnId": "25bf9a7f-0e1a-43da-a1ea-74b963475313",
+            "op": "SUM",
+            "value": "38"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CAPTURE: OR+AND — Kategori in {Alpha,Beta} AND Status=Aktif (expect total=2, row1+row2)",
+      "method": "GET",
+      "url": "/sheets/7a0ec8fb-390f-44d3-a155-26ce89f4ca56/rows?filter%5Bf3824476-4e21-40c6-bf36-f508a209ee36%5D%5B%5D=Alpha&filter%5Bf3824476-4e21-40c6-bf36-f508a209ee36%5D%5B%5D=Beta&filter%5Bb889aebd-378d-4265-b3e0-8303de8c025f%5D%5B%5D=Aktif",
+      "requestBody": null,
+      "status": 200,
+      "response": {
+        "rows": [
+          {
+            "rowId": "4856c5a6-6d99-4077-bdeb-458032604d06",
+            "orderIndex": 1,
+            "cells": {
+              "25bf9a7f-0e1a-43da-a1ea-74b963475313": "10",
+              "a3ddb580-c30f-4dfc-a2ac-c299364729f8": "5",
+              "097adac1-547d-449a-854c-7085ed7eedb6": "15",
+              "f3824476-4e21-40c6-bf36-f508a209ee36": "Alpha",
+              "b889aebd-378d-4265-b3e0-8303de8c025f": "Aktif"
+            }
+          },
+          {
+            "rowId": "fdac9677-8c60-409d-88b2-392d7bbced2d",
+            "orderIndex": 2,
+            "cells": {
+              "25bf9a7f-0e1a-43da-a1ea-74b963475313": "20",
+              "a3ddb580-c30f-4dfc-a2ac-c299364729f8": "3",
+              "097adac1-547d-449a-854c-7085ed7eedb6": "23",
+              "f3824476-4e21-40c6-bf36-f508a209ee36": "Beta",
+              "b889aebd-378d-4265-b3e0-8303de8c025f": "Aktif"
+            }
+          }
+        ],
+        "total": 2,
+        "limit": 50,
+        "offset": 0,
+        "aggregates": [
+          {
+            "id": "7fe7c30d-3539-4b7f-b30c-eed680005a7c",
+            "columnId": "25bf9a7f-0e1a-43da-a1ea-74b963475313",
+            "op": "SUM",
+            "value": "38"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CAPTURE: AND — Kategori=Gamma AND Status=Nonaktif (expect total=0, empty intersection)",
+      "method": "GET",
+      "url": "/sheets/7a0ec8fb-390f-44d3-a155-26ce89f4ca56/rows?filter%5Bf3824476-4e21-40c6-bf36-f508a209ee36%5D%5B%5D=Gamma&filter%5Bb889aebd-378d-4265-b3e0-8303de8c025f%5D%5B%5D=Nonaktif",
+      "requestBody": null,
+      "status": 200,
+      "response": {
+        "rows": [],
+        "total": 0,
+        "limit": 50,
+        "offset": 0,
+        "aggregates": [
+          {
+            "id": "7fe7c30d-3539-4b7f-b30c-eed680005a7c",
+            "columnId": "25bf9a7f-0e1a-43da-a1ea-74b963475313",
+            "op": "SUM",
+            "value": "38"
+          }
+        ]
+      }
+    }
+  ]
+}
