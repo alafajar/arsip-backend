@@ -63,22 +63,25 @@ export class SheetsController {
     summary: 'Pohon kolom sheet',
     description:
       'Mengembalikan array root ColumnNode; tiap node punya `children`. ' +
-      'Leaf node (children=[]) adalah kolom data. `orderIndex` unik antar-sibling, bukan global.',
+      'Leaf node (children=[]) adalah kolom data. `orderIndex` unik antar-sibling, bukan global. ' +
+      'Kolom formula horizontal ditandai lewat `formulaOp` (bukan `null`) dan `formulaOperandIds` ' +
+      '(daftar UUID operand); kolom biasa selalu `formulaOp: null, formulaOperandIds: []`.',
   })
   @ApiParam({ name: 'id', description: 'UUID sheet' })
   @ApiResponse({
     status: 200,
     schema: {
       example: [
-        { id: 'uuid-no', name: 'No.', type: 'INTEGER', orderIndex: 1, children: [] },
-        { id: 'uuid-nama', name: 'Nama Dosen', type: 'TEXT', orderIndex: 2, children: [] },
-        { id: 'uuid-kual', name: 'Kualifikasi Akademik Terakhir', type: 'TEXT', orderIndex: 3, children: [
-          { id: 'uuid-mag', name: 'Magister', type: 'TEXT', orderIndex: 1, children: [] },
-          { id: 'uuid-dok', name: 'Doktor', type: 'TEXT', orderIndex: 2, children: [] },
+        { id: 'uuid-no', name: 'No.', type: 'INTEGER', orderIndex: 1, formulaOp: null, formulaOperandIds: [], children: [] },
+        { id: 'uuid-nama', name: 'Nama Dosen', type: 'TEXT', orderIndex: 2, formulaOp: null, formulaOperandIds: [], children: [] },
+        { id: 'uuid-kual', name: 'Kualifikasi Akademik Terakhir', type: 'TEXT', orderIndex: 3, formulaOp: null, formulaOperandIds: [], children: [
+          { id: 'uuid-mag', name: 'Magister', type: 'TEXT', orderIndex: 1, formulaOp: null, formulaOperandIds: [], children: [] },
+          { id: 'uuid-dok', name: 'Doktor', type: 'TEXT', orderIndex: 2, formulaOp: null, formulaOperandIds: [], children: [] },
         ]},
-        { id: 'uuid-jab', name: 'Jabatan Akademik', type: 'TEXT', orderIndex: 4, children: [] },
-        { id: 'uuid-nidn', name: 'NIDN', type: 'TEXT', orderIndex: 5, children: [] },
-        { id: 'uuid-link', name: 'Link Dokumen', type: 'URL', orderIndex: 6, children: [] },
+        { id: 'uuid-jab', name: 'Jabatan Akademik', type: 'TEXT', orderIndex: 4, formulaOp: null, formulaOperandIds: [], children: [] },
+        { id: 'uuid-nidn', name: 'NIDN', type: 'TEXT', orderIndex: 5, formulaOp: null, formulaOperandIds: [], children: [] },
+        { id: 'uuid-link', name: 'Link Dokumen', type: 'URL', orderIndex: 6, formulaOp: null, formulaOperandIds: [], children: [] },
+        { id: 'uuid-total', name: 'Total', type: 'INTEGER', orderIndex: 7, formulaOp: 'ADD', formulaOperandIds: ['uuid-no', 'uuid-nidn'], children: [] },
       ],
     },
   })

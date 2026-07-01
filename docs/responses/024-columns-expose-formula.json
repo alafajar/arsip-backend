@@ -1,0 +1,171 @@
+[
+  {
+    "name": "Columns (023 FE Contract Test — has formula col)",
+    "method": "GET",
+    "url": "/sheets/7a0ec8fb-390f-44d3-a155-26ce89f4ca56/columns",
+    "status": 200,
+    "response": [
+      {
+        "id": "25bf9a7f-0e1a-43da-a1ea-74b963475313",
+        "name": "A",
+        "type": "INTEGER",
+        "orderIndex": 1,
+        "formulaOp": null,
+        "formulaOperandIds": [],
+        "children": []
+      },
+      {
+        "id": "a3ddb580-c30f-4dfc-a2ac-c299364729f8",
+        "name": "B",
+        "type": "INTEGER",
+        "orderIndex": 2,
+        "formulaOp": null,
+        "formulaOperandIds": [],
+        "children": []
+      },
+      {
+        "id": "097adac1-547d-449a-854c-7085ed7eedb6",
+        "name": "Total",
+        "type": "INTEGER",
+        "orderIndex": 3,
+        "formulaOp": "ADD",
+        "formulaOperandIds": [
+          "25bf9a7f-0e1a-43da-a1ea-74b963475313",
+          "a3ddb580-c30f-4dfc-a2ac-c299364729f8"
+        ],
+        "children": []
+      },
+      {
+        "id": "f3824476-4e21-40c6-bf36-f508a209ee36",
+        "name": "Kategori",
+        "type": "TEXT",
+        "orderIndex": 4,
+        "formulaOp": null,
+        "formulaOperandIds": [],
+        "children": []
+      }
+    ]
+  },
+  {
+    "name": "Columns (DTPS — has nested group column)",
+    "method": "GET",
+    "url": "/sheets/00000000-0000-0000-0002-000000000001/columns",
+    "status": 200,
+    "response": [
+      {
+        "id": "00000000-0000-0000-0003-000000000001",
+        "name": "No.",
+        "type": "INTEGER",
+        "orderIndex": 1,
+        "formulaOp": null,
+        "formulaOperandIds": [],
+        "children": []
+      },
+      {
+        "id": "00000000-0000-0000-0003-000000000002",
+        "name": "Nama Dosen",
+        "type": "TEXT",
+        "orderIndex": 2,
+        "formulaOp": null,
+        "formulaOperandIds": [],
+        "children": []
+      },
+      {
+        "id": "00000000-0000-0000-0003-000000000003",
+        "name": "Kualifikasi Akademik",
+        "type": "TEXT",
+        "orderIndex": 3,
+        "formulaOp": null,
+        "formulaOperandIds": [],
+        "children": [
+          {
+            "id": "00000000-0000-0000-0003-000000000004",
+            "name": "Magister",
+            "type": "TEXT",
+            "orderIndex": 1,
+            "formulaOp": null,
+            "formulaOperandIds": [],
+            "children": []
+          },
+          {
+            "id": "00000000-0000-0000-0003-000000000005",
+            "name": "Doktor",
+            "type": "TEXT",
+            "orderIndex": 2,
+            "formulaOp": null,
+            "formulaOperandIds": [],
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "00000000-0000-0000-0003-000000000006",
+        "name": "Jabatan Akademik",
+        "type": "TEXT",
+        "orderIndex": 4,
+        "formulaOp": null,
+        "formulaOperandIds": [],
+        "children": []
+      },
+      {
+        "id": "00000000-0000-0000-0003-000000000007",
+        "name": "NIDN",
+        "type": "TEXT",
+        "orderIndex": 5,
+        "formulaOp": null,
+        "formulaOperandIds": [],
+        "children": []
+      },
+      {
+        "id": "00000000-0000-0000-0003-000000000008",
+        "name": "Link Dokumen",
+        "type": "URL",
+        "orderIndex": 6,
+        "formulaOp": null,
+        "formulaOperandIds": [],
+        "children": []
+      },
+      {
+        "id": "f665b0e2-a0b3-4c56-9585-ce9265a60cdf",
+        "name": "Test",
+        "type": "TEXT",
+        "orderIndex": 7,
+        "formulaOp": null,
+        "formulaOperandIds": [],
+        "children": []
+      }
+    ]
+  },
+  {
+    "name": "Not found sheet",
+    "method": "GET",
+    "url": "/sheets/00000000-0000-0000-0000-000000000000/columns",
+    "status": 404,
+    "response": {
+      "message": "Sheet tidak ditemukan",
+      "error": "Not Found",
+      "statusCode": 404
+    }
+  },
+  {
+    "name": "Invalid UUID",
+    "method": "GET",
+    "url": "/sheets/not-a-uuid/columns",
+    "status": 400,
+    "response": {
+      "message": "Validation failed (uuid is expected)",
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  {
+    "name": "No token",
+    "method": "GET",
+    "url": "/sheets/00000000-0000-0000-0002-000000000001/columns",
+    "status": 401,
+    "response": {
+      "message": "Unauthorized",
+      "statusCode": 401
+    }
+  }
+]

@@ -86,6 +86,8 @@ export interface ColumnNode {
   name: string;
   type: ColumnType;
   orderIndex: number;
+  formulaOp: FormulaOp | null;
+  formulaOperandIds: string[];
   children: ColumnNode[];
 }
 
@@ -102,14 +104,20 @@ export class SheetsService {
 
     const rows = await this.prisma.column.findMany({
       where: { sheetId },
-      select: { id: true, name: true, type: true, orderIndex: true, parentColumnId: true },
+      select: {
+        id: true, name: true, type: true, orderIndex: true, parentColumnId: true,
+        formulaOp: true, formulaOperandIds: true,
+      },
       orderBy: [{ orderIndex: 'asc' }, { id: 'asc' }],
     });
 
     // Bangun pohon di memori dari list datar — anti-N+1 (satu query, pivot di kode)
     const map = new Map<string, ColumnNode>();
     for (const row of rows) {
-      map.set(row.id, { id: row.id, name: row.name, type: row.type, orderIndex: row.orderIndex, children: [] });
+      map.set(row.id, {
+        id: row.id, name: row.name, type: row.type, orderIndex: row.orderIndex,
+        formulaOp: row.formulaOp, formulaOperandIds: row.formulaOperandIds, children: [],
+      });
     }
 
     const roots: ColumnNode[] = [];
